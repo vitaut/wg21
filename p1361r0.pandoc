@@ -1,0 +1,373 @@
+---
+title: Integration of chrono with text formatting
+document: P1361R0
+date: 2018-10-16
+audience: Library Evolution Working Group, Library Working Group
+author:
+  - name: Victor Zverovich
+    email: <victor.zverovich@gmail.com>
+favicon: data:image/png;base64,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
+---
+
+# Motivation
+
+[@P0355] that includes `strftime`-like formatting facilities for chrono types
+was adopted into the draft standard for C++20 in Jacksonville. Meanwhile
+[@P0645] that provides more general formatting facilities was accepted by
+Library Evolution Working Group in San Diego and forwarded to Library Working
+Group for a wording review also targeting C++20. In this paper we propose
+revising the output APIs added by [@P0355] based on [@P0645].
+
+::: tonytable
+
+### Before
+```cpp
+std::chrono::format example
+```
+
+### After
+```cpp
+std::format example
+```
+
+:::
+
+# Questions
+
+HH There's also a std::chrono::parse which this doesn't have. For symmetry
+purposes I think we need to alias this to std::chrono as well, but I have not
+tried that. Do we care about the lack of symmetry?
+
+HH I have an overall question. The chrono format has to have the ability to do
+locale sensitive weekday names and similar without touching the global locale;
+is that going to present a problem coming through whatever customization points
+are in here?
+
+# Proposed Wording
+
+Modify section 25.2 Header `<chrono>` synopsis
+[[time.syn]](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#section.25.2):
+
+```diff
+  // 25.5.10, duration I/O
+  template<class charT, class traits, class Rep, class Period>
+    basic_ostream<charT, traits>&
+      operator<<(basic_ostream<charT, traits>& os,
+                 const duration<Rep, Period>& d);
+- template<class charT, class traits, class Rep, class Period>
+-   basic_ostream<charT, traits>&
+-     to_stream(basic_ostream<charT, traits>& os, const charT* fmt,
+-               const duration<Rep, Period>& d);
++ template<class Rep, class Period, class charT>
++   struct formatter<duration<Rep, Period>, charT>;
+
+...
+
+  template<class charT, class traits>
+    basic_ostream<charT, traits>&
+      operator<<(basic_ostream<charT, traits>& os, const sys_days& dp);
+
+- template<class charT, class traits, class Duration>
+-   basic_ostream<charT, traits>&
+-     to_stream(basic_ostream<charT, traits>& os, const charT* fmt,
+-               const sys_time<Duration>& tp);
++ template<class Duration, class charT>
++   struct formatter<sys_time<Duration>, charT>;
+
+...
+
+  template<class charT, class traits, class Duration>
+    basic_ostream<charT, traits>&
+      operator<<(basic_ostream<charT, traits>& os, const utc_time<Duration>& t);
+- template<class charT, class traits, class Duration>
+-   basic_ostream<charT, traits>&
+-     to_stream(basic_ostream<charT, traits>& os, const charT* fmt,
+-               const utc_time<Duration>& tp);
++ template<class Duration, class charT>
++   struct formatter<utc_time<Duration>, charT>;
+
+...
+
+  template<class charT, class traits, class Duration>
+    basic_ostream<charT, traits>&
+      operator<<(basic_ostream<charT, traits>& os, const tai_time<Duration>& t);
+- template<class charT, class traits, class Duration>
+-   basic_ostream<charT, traits>&
+-     to_stream(basic_ostream<charT, traits>& os, const charT* fmt,
+-               const tai_time<Duration>& tp);
++ template<class Duration, class charT>
++   struct formatter<tai_time<Duration>, charT>;
+
+...
+
+  template<class charT, class traits, class Duration>
+    basic_ostream<charT, traits>&
+      operator<<(basic_ostream<charT, traits>& os, const gps_time<Duration>& t);
+- template<class charT, class traits, class Duration>
+-   basic_ostream<charT, traits>&
+-     to_stream(basic_ostream<charT, traits>& os, const charT* fmt,
+-               const gps_time<Duration>& tp);
++ template<class Duration, class charT>
++   struct formatter<gps_time<Duration>, charT>;
+
+...
+
+template<class charT, class traits, class Duration>
+  basic_ostream<charT, traits>&
+    operator<<(basic_ostream<charT, traits>& os, const file_time<Duration>& tp);
+- template<class charT, class traits, class Duration>
+-   basic_ostream<charT, traits>&
+-     to_stream(basic_ostream<charT, traits>& os, const charT* fmt,
+-               const file_time<Duration>& tp);
++ template<class Duration, class charT>
++   struct formatter<file_time<Duration>, charT>;
+
+...
+
+  template<class charT, class traits, class Duration>
+    basic_ostream<charT, traits>&
+      operator<<(basic_ostream<charT, traits>& os, const local_time<Duration>& tp);
+- template<class charT, class traits, class Duration>
+-   basic_ostream<charT, traits>&
+-     to_stream(basic_ostream<charT, traits>& os, const charT* fmt,
+-               const local_time<Duration>& tp,
+-               const string* abbrev = nullptr, const seconds* offset_sec = nullptr);
++ template<class Duration, class charT>
++   struct formatter<local_time<Duration>, charT>;
++
++ template<class Duration> struct local_time_format;
++ template<class Duration, class charT>
++   struct formatter<local_time_format<Duration>, charT>;
+
+...
+
+  template<class charT, class traits>
+    basic_ostream<charT, traits>&
+      operator<<(basic_ostream<charT, traits>& os, const day& d);
+- template<class charT, class traits>
+-   basic_ostream<charT, traits>&
+-     to_stream(basic_ostream<charT, traits>& os, const charT* fmt, const day& d);
++ template<class charT>
++   struct formatter<day, charT>;
+
+...
+
+  template<class charT, class traits>
+    basic_ostream<charT, traits>&
+      operator<<(basic_ostream<charT, traits>& os, const month& m);
+- template<class charT, class traits>
+-   basic_ostream<charT, traits>&
+-     to_stream(basic_ostream<charT, traits>& os, const charT* fmt, const month& m);
++ template<class charT>
++   struct formatter<month, charT>;
+
+...
+
+  template<class charT, class traits>
+    basic_ostream<charT, traits>&
+      operator<<(basic_ostream<charT, traits>& os, const year& y);
+
+- template<class charT, class traits>
+-   basic_ostream<charT, traits>&
+-     to_stream(basic_ostream<charT, traits>& os, const charT* fmt, const year& y);
++ template<class charT>
++   struct formatter<year, charT>;
+
+...
+
+  template<class charT, class traits>
+    basic_ostream<charT, traits>&
+      operator<<(basic_ostream<charT, traits>& os, const weekday& wd);
+
+- template<class charT, class traits>
+-   basic_ostream<charT, traits>&
+-     to_stream(basic_ostream<charT, traits>& os, const charT* fmt, const weekday& wd);
++ template<class charT>
++   struct formatter<weekday, charT>;
+
+...
+
+  template<class charT, class traits>
+    basic_ostream<charT, traits>&
+      operator<<(basic_ostream<charT, traits>& os, const weekday_indexed& wdi);
++ template<class charT>
++   struct formatter<weekday_indexed, charT>;
+
+...
+
+  template<class charT, class traits>
+    basic_ostream<charT, traits>&
+      operator<<(basic_ostream<charT, traits>& os, const weekday_last& wdl);
++ template<class charT>
++   struct formatter<weekday_last, charT>;
+
+...
+
+  template<class charT, class traits>
+    basic_ostream<charT, traits>&
+      operator<<(basic_ostream<charT, traits>& os, const month_day& md);
+- template<class charT, class traits>
+-   basic_ostream<charT, traits>&
+-     to_stream(basic_ostream<charT, traits>& os, const charT* fmt, const month_day& md);
++ template<class charT>
++   struct formatter<month_day, charT>;
+
+...
+
+  template<class charT, class traits>
+    basic_ostream<charT, traits>&
+       operator<<(basic_ostream<charT, traits>& os, const month_day_last& mdl);
++ template<class charT>
++   struct formatter<month_day_last, charT>;
+
+...
+
+  template<class charT, class traits>
+    basic_ostream<charT, traits>&
+      operator<<(basic_ostream<charT, traits>& os, const month_weekday& mwd);
++ template<class charT>
++   struct formatter<month_weekday, charT>;
+
+...
+
+  template<class charT, class traits>
+    basic_ostream<charT, traits>&
+      operator<<(basic_ostream<charT, traits>& os, const month_weekday_last& mwdl);
++ template<class charT>
++   struct formatter<month_weekday_last, charT>;
+
+...
+
+  template<class charT, class traits>
+    basic_ostream<charT, traits>&
+      operator<<(basic_ostream<charT, traits>& os, const year_month& ym);
+
+- template<class charT, class traits>
+-   basic_ostream<charT, traits>&
+-     to_stream(basic_ostream<charT, traits>& os, const charT* fmt, const year_month& ym);
++ template<class charT>
++   struct formatter<year_month, charT>;
+
+...
+
+  template<class charT, class traits>
+    basic_ostream<charT, traits>&
+      operator<<(basic_ostream<charT, traits>& os, const year_month_day& ymd);
+
+- template<class charT, class traits>
+-   basic_ostream<charT, traits>&
+-     to_stream(basic_ostream<charT, traits>& os, const charT* fmt,
+-               const year_month_day& ymd);
++ template<class charT>
++   struct formatter<year_month_day, charT>;
+
+...
+
+  template<class charT, class traits>
+    basic_ostream<charT, traits>&
+      operator<<(basic_ostream<charT, traits>& os, const year_month_day_last& ymdl);
++ template<class charT>
++   struct formatter<year_month_day_last, charT>;
+
+...
+
+  template<class charT, class traits>
+    basic_ostream<charT, traits>&
+      operator<<(basic_ostream<charT, traits>& os, const year_month_weekday& ymwdi);
++ template<class charT>
++   struct formatter<year_month_weekday, charT>;
+
+...
+
+  template<class charT, class traits>
+    basic_ostream<charT, traits>&
+      operator<<(basic_ostream<charT, traits>& os, const year_month_weekday_last& ymwdl);
++ template<class charT>
++   struct formatter<year_month_weekday_last, charT>;
+
+...
+
+  template<class charT, class traits, class Rep, class Period>
+    basic_ostream<charT, traits>&
+      operator<<(basic_ostream<charT, traits>& os,
+                 const time_of_day<duration<Rep, Period>>& t);
++ template<class Rep, class Period, class charT>
++   struct formatter<time_of_day<duration<Rep, Period>>, charT>;
+
+...
+
+  // 25.10.4, information classes
+  struct sys_info;
+  template<class charT, class traits>
+    basic_ostream<charT, traits>&
+      operator<<(basic_ostream<charT, traits>& os, const sys_info& si);
++ templateclass charT>
++   struct formatter<sys_info, charT>;
+
+  struct local_info;
+  template<class charT, class traits>
+    basic_ostream<charT, traits>&
+      operator<<(basic_ostream<charT, traits>& os, const local_info& li);
++ template<class charT>
++   struct formatter<local_info, charT>;
+
+...
+
+  template<class charT, class traits, class Duration, class TimeZonePtr>
+    basic_ostream<charT, traits>&
+      operator<<(basic_ostream<charT, traits>& os,
+                 const zoned_time<Duration, TimeZonePtr>& t);
+
+- template<class charT, class traits, class Duration, class TimeZonePtr>
+-   basic_ostream<charT, traits>&
+-     to_stream(basic_ostream<charT, traits>& os, const charT* fmt,
+-               const zoned_time<Duration, TimeZonePtr>& tp);
++ template<class Duration, class TimeZonePtr, class charT>
++   struct formatter<zoned_time<Duration, TimeZonePtr>, charT>;
+
+...
+
+- // 25.11, formatting
+- template<class charT, class Streamable>
+-   basic_string<charT>
+-     format(const charT* fmt, const Streamable& s);
+- template<class charT, class Streamable>
+-   basic_string<charT>
+-     format(const locale& loc, const charT* fmt, const Streamable& s);
+- template<class charT, class traits, class Alloc, class Streamable>
+-   basic_string<charT, traits, Alloc>
+-     format(const basic_string<charT, traits, Alloc>& fmt, const Streamable& s);
+- template<class charT, class traits, class Alloc, class Streamable>
+-   basic_string<charT, traits, Alloc>
+-     format(const locale& loc, const basic_string<charT, traits, Alloc>& fmt,
+-            const Streamable& s);
+```
+
+Modify section 25.5.10 I/O
+[[time.duration.io]](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#section.25.5.10):
+
+TODO
+
+---
+references:
+  - id: P0355
+    citation-label: P0355
+    title: Extending <chrono> to Calendars and Time Zones
+    author:
+      - family: Hinnant
+        given: [Howard E.]
+      - family: Kamiński
+        given: [Tomasz]
+    issued:
+      year: 2018
+    URL: http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p0355r7.html
+  - id: P0645
+    citation-label: P0645
+    title: Text Formatting
+    author:
+      family: Zverovich
+      given: [Victor]
+    issued:
+      year: 2018
+    URL: http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p0645r3.html
+---
