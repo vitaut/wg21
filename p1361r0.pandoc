@@ -18,19 +18,55 @@ Library Evolution Working Group in San Diego and forwarded to Library Working
 Group for a wording review also targeting C++20. In this paper we propose
 revising the output APIs added by [@P0355] based on [@P0645].
 
-::: tonytable
+Integrating the two proposals provides the following advantages:
 
-### Before
-```cpp
-std::chrono::format example
-```
+1. Easier formatting of multiple objects and positional arguments support
 
-### After
-```cpp
-std::format example
-```
+   **Before**
+   ```cpp
+   void print_birthday(std::string_view name,
+                       const std::chrono::year_month_day& birthday) {
+     std::cout << name << "'s birthday is "
+               << std::chrono::format("%Y-%m-%d", birthday) << ".\n";
+   }
+   ```
 
-:::
+   **After**
+   ```cpp
+   void print_birthday(std::string_view name,
+                       const std::chrono::year_month_day& birthday) {
+     std::cout << std::format("{0}'s birthday is {1:%Y-%m-%d}.\n", name, birthday);
+   }
+   ```
+
+2. Output iterator support and the ability to avoid dynamic allocations
+
+   **Before**
+   ```cpp
+   std::string str = std::chrono::format("%Y-%m-%d", date);
+   ```
+
+   **After**
+   ```cpp
+   std::array<char, 100> buf;
+   std::format_to_n(buf.data(), buf.size(), "{:%Y-%m-%d}", date);
+   ```
+
+3. Prevent confusing overload resolution
+
+   **Before**
+   ```cpp
+   std::chrono::year_month_day date;
+   format("...", date); // resolves to std::chrono::format
+   format(std::string_view("..."), date); // resolves to std::format
+   ```
+
+   **After**
+   ```cpp
+   std::chrono::year_month_day date;
+   format("...", date); // resolves to std::format
+   format(std::string_view("..."), date); // resolves to std::format
+   ```
 
 # Questions
 
@@ -344,7 +380,28 @@ template<class charT, class traits, class Duration>
 ```
 
 Modify section 25.5.10 I/O
-[[time.duration.io]](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#section.25.5.10):
+[[time.duration.io]](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsection.25.5.10):
+
+```diff
+- template<class charT, class traits, class Rep, class Period>
+-   basic_ostream<charT, traits>&
+-     to_stream(basic_ostream<charT, traits>& os, const charT* fmt,
+-               const duration<Rep, Period>& d);
++ template<class Rep, class Period, class charT>
++   struct formatter<duration<Rep, Period>, charT>;
+```
+
+> ::: rm
+> \pnum{6} Effects: Streams `d` into `os` using the format specified by the NTCTS `fmt`.
+> `fmt` encoding follows the rules specified in 25.11.
+>
+> \pnum{7} Returns: `os`.
+> :::
+> ::: add
+> The specialization is enabled and the format string encoding follows the rules
+> specified in
+> [25.11](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#section.25.11).
+> :::
 
 TODO
 
