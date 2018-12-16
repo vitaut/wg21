@@ -19,10 +19,10 @@ favicon: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAASx
 
 [@P0355] that includes a `strftime`-like formatting facility for chrono types
 was adopted into the draft standard for C++20 in Jacksonville. Meanwhile
-[@P0645] that provides a more general formatting facility was accepted by
-Library Evolution Working Group in San Diego and forwarded to Library Working
-Group for a wording review also targeting C++20. In this paper we propose
-revising the output APIs added by [@P0355] based on [@P0645].
+[@P0645] that provides a more general formatting facility was accepted by the
+Library Evolution working group in San Diego and forwarded to the Library
+working group for a wording review also targeting C++20. In this paper we
+propose revising the output APIs added by [@P0355] based on [@P0645].
 
 Integrating the two proposals provides the following advantages:
 
@@ -73,6 +73,16 @@ Integrating the two proposals provides the following advantages:
    format("...", date);                   // resolves to std::format
    format(std::string_view("..."), date); // resolves to std::format
    ```
+
+# Locale
+
+One feature that [@P0355] has and [@P0645] doesn't is the ability to pass a
+locale to a formatting fuction. We propose extending the format API of P0645 to
+allow the same.
+
+```c++
+TODO: locale example
+```
 
 # Questions
 
@@ -477,6 +487,54 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.
 > :::
 
 TODO
+
+Additions to P0645:
+
+```c++
+template<class O, class charT> requires OutputIterator<O, const charT&>
+  class basic_format_context {
+  public:
+    std::locale locale();
+    // ...
+  };
+
+template<class... Args>
+  string format(const locale& loc, string_view fmt, const Args&... args);
+template<class... Args>
+  wstring format(const locale& loc, wstring_view fmt, const Args&... args);
+
+string vformat(const locale& loc, string_view fmt, format_args args);
+wstring vformat(const locale& loc, wstring_view fmt, wformat_args args);
+
+template<OutputIterator<const char&> O, class... Args>
+  O format_to(O out, const locale& loc, string_view fmt, const Args&... args);
+template<OutputIterator<const wchar_t&> O, class... Args>
+  O format_to(O out, const locale& loc, wstring_view fmt, const Args&... args);
+
+template<OutputIterator<const char&> O>
+  O vformat_to(O out, const locale& loc, string_view fmt,
+               format_args_t<O, char> args);
+template<OutputIterator<const wchar_t&> O>
+  O vformat_to(O out, const locale& loc, wstring_view fmt,
+               format_args_t<O, wchar_t> args);
+
+template<OutputIterator<const char&> O, class... Args>
+  format_to_n_result<O> format_to_n(O out, iter_difference_t<O> n,
+                                    const locale& loc, string_view fmt,
+                                    const Args&... args);
+template<OutputIterator<const wchar_t&> O, class... Args>
+  format_to_n_result<O> format_to_n(O out, iter_difference_t<O> n,
+                                    const locale& loc, wstring_view fmt,
+                                    const Args&... args);
+
+template<class... Args>
+  size_t formatted_size(const locale& loc, string_view fmt,
+                        const Args&... args);
+template<class... Args>
+  size_t formatted_size(const locale& loc, wstring_view fmt,
+                        const Args&... args);
+```
+
 
 ---
 references:
