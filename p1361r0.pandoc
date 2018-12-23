@@ -97,7 +97,7 @@ are in here?
 
 # Proposed Wording
 
-This wording is based on the working draft [@N4727].
+This wording is based on the working draft [@N4727] unless stated otherwise.
 
 Modify section 25.2 Header `<chrono>` synopsis
 [[time.syn]](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#section.25.2):
@@ -454,6 +454,17 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.
 Modify section 25.7.2.3 Non-member functions [[time.clock.utc.nonmembers]](
 http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.7.2.3):
 
+> ::: rm
+> \pnum{1} *Effects:* Calls `to_stream(os, fmt, t)`, where `fmt` is a string
+> containing `"%F %T"` widened to `charT`.
+> :::
+<!-- Passing locale to format seems unnecessary because %F and %T are
+     locale-independent. -->
+> ::: add
+> \pnum{1} *Effects:* Equivalent to `os << format(fmt, t)`, where `fmt` is a
+> string containing `"{:%F %T}"` widened to `charT`.
+> :::
+
 ```diff
 - template<class charT, class traits, class Duration>
 -   basic_ostream<charT, traits>&
@@ -474,7 +485,6 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.
 > \pnum{4} *Returns:* `os`.
 > :::
 
-
 > ::: add
 > The specialization is enabled and the format string encoding follows the rules
 > specified in
@@ -486,9 +496,136 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.
 > `"60"` widened to `charT`.
 > :::
 
+Modify section 25.7.3.3 Non-member functions [time.clock.tai.nonmembers](
+http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.7.3.3):
+
+> ::: rm
+> \pnum{1} *Effects:* Calls `to_stream(os, fmt, t)`, where `fmt` is a string
+> containing `"%F %T"` widened to `charT`.
+> :::
+> ::: add
+> \pnum{1} *Effects:* Equivalent to `os << format(fmt, t)`, where `fmt` is a
+> string containing `"{:%F %T}"` widened to `charT`.
+> :::
+
+TODO: replace all `to_stream` overloads with `formatter` specializations and
+      rephrase references to `to_stream` in terms of `format`.
+
+Modify section 25.11 Formatting [[time.format]](
+http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#section.25.11):
+
+> ::: rm
+> \pnum{1} Each `format` overload specified in this subclause calls `to_stream`
+> unqualified, so as to enable argument dependent lookup
+> ([6.4.2](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsection.6.4.2)).
+>
+> ```
+> template<class charT, class Streamable>
+>   basic_string<charT>
+>     format(const charT* fmt, const Streamable& s);
+> ```
+>
+> ...
+>
+> \pnum{13} Returns: `os.str()`.
+> :::
+
 TODO
 
-Additions to P0645:
+## Changes to P0645 Text Formatting
+
+The wording in this section is based on [@P0645].
+
+Modify section 19.20.1 Header `<format>` synopsis
+[[format.syn]](http://fmtlib.net/P0645R4.html#gensection-5):
+
+```diff
+  template<class... Args>
+    wstring format(wstring_view fmt, const Args&... args);
++ template<class... Args>
++   string format(const locale& loc, string_view fmt, const Args&... args);
++ template<class... Args>
++   wstring format(const locale& loc, wstring_view fmt, const Args&... args);
+
+...
+
+  wstring vformat(wstring_view fmt, wformat_args args);
++ string vformat(const locale& loc, string_view fmt, format_args args);
++ wstring vformat(const locale& loc, wstring_view fmt, wformat_args args);
+
+...
+
+  template<OutputIterator<const wchar_t&> O, class... Args>
+    O format_to(O out, wstring_view fmt, const Args&... args);
++ template<OutputIterator<const char&> O, class... Args>
++   O format_to(O out, const locale& loc, string_view fmt, const Args&... args);
++ template<OutputIterator<const wchar_t&> O, class... Args>
++   O format_to(O out, const locale& loc, wstring_view fmt, const Args&... args);
+
+...
+
+  template<OutputIterator<const wchar_t&> O>
+    O vformat_to(O out, wstring_view fmt, format_args_t<O, wchar_t> args);
++ template<OutputIterator<const char&> O>
++   O vformat_to(O out, const locale& loc, string_view fmt,
++                format_args_t<O, char> args);
++ template<OutputIterator<const wchar_t&> O>
++   O vformat_to(O out, const locale& loc, wstring_view fmt,
++                format_args_t<O, wchar_t> args);
+
+...
+
+  template<OutputIterator<const char&> O, class... Args>
+    format_to_n_result<O> format_to_n(O out, iter_difference_t<O> n,
+                                      string_view fmt, const Args&... args);
++ template<OutputIterator<const char&> O, class... Args>
++   format_to_n_result<O> format_to_n(O out, iter_difference_t<O> n,
++                                     const locale& loc, string_view fmt,
++                                     const Args&... args);
++ template<OutputIterator<const wchar_t&> O, class... Args>
++   format_to_n_result<O> format_to_n(O out, iter_difference_t<O> n,
++                                     const locale& loc, wstring_view fmt,
++                                     const Args&... args);
+
+...
+
+  template<class... Args>
+    size_t formatted_size(wstring_view fmt, const Args&... args);
++ template<class... Args>
++   size_t formatted_size(const locale& loc, string_view fmt,
++                         const Args&... args);
++ template<class... Args>
++   size_t formatted_size(const locale& loc, wstring_view fmt,
++                         const Args&... args);
+```
+
+Modify section 19.20.2 Formatting functions
+[[format.functions]](http://fmtlib.net/P0645R4.html#format.functions):
+
+> ::: add
+> ```
+> template<class... Args>
+>   string format(const locale& loc, string_view fmt, const Args&... args);
+> ```
+> *Returns:* `vformat(loc, fmt, make_format_args(args...))`.
+>
+> ```
+> template<class... Args>
+>   wstring format(const locale& loc, wstring_view fmt, const Args&... args);
+> ```
+> *Returns:* `vformat(loc, fmt, make_wformat_args(args...))`.
+>
+> ```
+> string vformat(const locale& loc, string_view fmt, format_args args);
+> ```
+> *Returns:* A string object holding the character representation of formatting
+> arguments provided by args formatted according to specifications given in
+> `fmt` using `loc` for locale-specific formatting.
+>
+> *Throws:* `format_error` if `fmt` is not a valid format string.
+> :::
+
+TODO: rephrase locale handling
 
 ```c++
 template<class O, class charT> requires OutputIterator<O, const charT&>
@@ -498,43 +635,7 @@ template<class O, class charT> requires OutputIterator<O, const charT&>
     // ...
   };
 
-template<class... Args>
-  string format(const locale& loc, string_view fmt, const Args&... args);
-template<class... Args>
-  wstring format(const locale& loc, wstring_view fmt, const Args&... args);
-
-string vformat(const locale& loc, string_view fmt, format_args args);
-wstring vformat(const locale& loc, wstring_view fmt, wformat_args args);
-
-template<OutputIterator<const char&> O, class... Args>
-  O format_to(O out, const locale& loc, string_view fmt, const Args&... args);
-template<OutputIterator<const wchar_t&> O, class... Args>
-  O format_to(O out, const locale& loc, wstring_view fmt, const Args&... args);
-
-template<OutputIterator<const char&> O>
-  O vformat_to(O out, const locale& loc, string_view fmt,
-               format_args_t<O, char> args);
-template<OutputIterator<const wchar_t&> O>
-  O vformat_to(O out, const locale& loc, wstring_view fmt,
-               format_args_t<O, wchar_t> args);
-
-template<OutputIterator<const char&> O, class... Args>
-  format_to_n_result<O> format_to_n(O out, iter_difference_t<O> n,
-                                    const locale& loc, string_view fmt,
-                                    const Args&... args);
-template<OutputIterator<const wchar_t&> O, class... Args>
-  format_to_n_result<O> format_to_n(O out, iter_difference_t<O> n,
-                                    const locale& loc, wstring_view fmt,
-                                    const Args&... args);
-
-template<class... Args>
-  size_t formatted_size(const locale& loc, string_view fmt,
-                        const Args&... args);
-template<class... Args>
-  size_t formatted_size(const locale& loc, wstring_view fmt,
-                        const Args&... args);
 ```
-
 
 ---
 references:
