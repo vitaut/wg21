@@ -26,7 +26,7 @@ propose revising the output APIs added by [@P0355] based on [@P0645].
 
 Integrating the two proposals provides the following advantages:
 
-1. Easier formatting of multiple objects and positional arguments support
+1. Easier formatting of multiple objects and positional arguments support:
 
    **Before**
    ```cpp
@@ -45,7 +45,8 @@ Integrating the two proposals provides the following advantages:
    }
    ```
 
-2. Output iterator support and the ability to avoid dynamic allocations
+2. Output iterator support and the ability to easily avoid dynamic memory
+   allocations:
 
    **Before**
    ```cpp
@@ -58,7 +59,7 @@ Integrating the two proposals provides the following advantages:
    std::format_to_n(buf.data(), buf.size(), "{:%Y-%m-%d}", date);
    ```
 
-3. Prevent confusing overload resolution
+3. Prevent confusing overload resolution:
 
    **Before**
    ```cpp
@@ -74,26 +75,45 @@ Integrating the two proposals provides the following advantages:
    format(std::string_view("..."), date); // resolves to std::format
    ```
 
+4. Allow fill, width, and alignment in a format string using the same syntax as
+   for other types:
+
+   **Before**
+   ```cpp
+   std::cout << std::setw(20) << std::right
+             << std::chrono::format("%Y-%m-%d", birthday) << "\n";
+   ```
+
+   **After**
+   ```cpp
+   std::cout << std::format("{0:>20%Y-%m-%d}\n", birthday);
+   ```
+
 # Locale
 
 One feature that [@P0355] has and [@P0645] doesn't is the ability to pass a
 locale to a formatting fuction. We propose extending the format API of P0645 to
 allow the same.
 
-```c++
-TODO: locale example
+
+**Before**
+```cpp
+auto zt = std::chrono::zoned_time(...);
+std::cout << "Localized time is "
+          << std::chrono::format(std::locale{"fi_FI"}, "%c", zt) << "\n";
 ```
 
-# Questions
+**After**
+```cpp
+auto zt = std::chrono::zoned_time(...);
+std::cout << std::format(std::locale{"fi_FI"}, "Localized time is {:%c}\n", zt);
+```
+
+# Open Questions
 
 HH There's also a std::chrono::parse which this doesn't have. For symmetry
 purposes I think we need to alias this to std::chrono as well, but I have not
 tried that. Do we care about the lack of symmetry?
-
-HH I have an overall question. The chrono format has to have the ability to do
-locale sensitive weekday names and similar without touching the global locale;
-is that going to present a problem coming through whatever customization points
-are in here?
 
 # Proposed Wording
 
@@ -528,9 +548,119 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#section.25.11)
 > ...
 >
 > \pnum{13} Returns: `os.str()`.
+>
+> \pnum{14} The `format` functions call a `to_stream` function with a
+> `basic_ostream`, a formatting string specifier, and a `Streamable` argument.
+> Each `to_stream` overload is customized for each `Streamable` type. However all
+> `to_stream` overloads treat the formatting string specifier according to the
+> following specification:
+>
+> \pnum{15} The `fmt` string consists of zero or more conversion specifiers and
+> ordinary multibyte characters. A conversion specifier consists of a `%`
+> character, possibly followed by an `E` or `O` modifier character (described
+> below), followed by a character that determines the behavior of the conversion
+> specifier. All ordinary multibyte characters (excluding the terminating null
+> character) are streamed unchanged into the `basic_ostream`.
 > :::
 
-TODO
+> ::: add
+> Each `formatter` specialization in the chrono library
+> ([25.2](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#section.25.2))
+> satisfies the *Formatter* requirements
+> ([[formatter.requirements]](http://fmtlib.net/P0645R4.html#gensection-6)).
+>
+> The `parse` member functions of these formatters treat the formatting string
+> according to the following specification:
+>
+> ```
+> format-spec     ::= [[fill] align] [width] [conversion-spec [chrono-specs]]
+> chrono-specs    ::= chrono-spec [chrono-specs]
+> chrono-spec     ::= literal-char | conversion-spec
+> literal-char    ::= <a character other than '{' or '}'>
+> conversion-spec ::= '%' [modifier] type
+> modifier        ::= 'E' | 'O'
+> type            ::= 'a' | 'A' | 'b' | 'B' | 'c' | 'C' | 'd' | 'D' | 'e' | 'F' | 'g' |
+>                     'G' | 'h' | 'H' | 'I' | 'j' | 'm' | 'M' | 'n' | 'p' | 'r' | 'R' |
+>                     'S' | 't' | 'T' | 'u' | 'U' | 'V' | 'w' | 'W' | 'x' | 'X' | 'y' |
+>                     'Y' | 'z' | 'Z' | '%'
+> ```
+>
+> `fill`, `align`, and `width` are described in Section
+> [[format.functions]](http://fmtlib.net/P0645R4.html#format-functions).
+> All ordinary multibyte characters represented by `literal-char` are copied
+> unchanged to the output.
+> :::
+
+> ::: rm
+> \pnum{16} Each conversion specifier is replaced by appropriate characters as
+> described in Table [88](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#table.25.88).
+> Some of the conversion specifiers depend on the locale which is imbued to the
+> `basic_ostream`. If the `Streamable` object does not contain the information
+> the conversion specifier refers to, the value streamed to the `basic_ostream`
+> is unspecified.
+> :::
+
+> ::: add
+> Each conversion specifier `conversion-spec` is replaced by appropriate
+> characters as described in Table 88. Some of the conversion specifiers depend
+> on the locale which is passed to the formatting function if the latter takes
+> one or the global locale otherwise. If the formatted object does not contain
+> the information the conversion specifier refers to, the value written to the
+> output is unspecified.
+> :::
+
+> ::: rm
+> \pnum{17} Unless explicitly specified, `Streamable` types will not contain
+> time zone abbreviation and time zone offset information. If available, the
+> conversion specifiers `%Z` and `%z` will format this information
+> (respectively). If the information is not available, and `%Z` or `%z` are
+> contained in `fmt`, `os.setstate(ios_base::failbit)` shall be called.
+> :::
+
+> ::: add
+> Unless explicitly specified, formatted chrono types will not contain time zone
+> abbreviation and time zone offset information. If available, the conversion
+> specifiers `%Z` and `%z` will format this information (respectively). If the
+> information is not available, and `%Z` or `%z` are contained in `format-spec`,
+> `format_error` shall be thrown.
+> :::
+
+> Table 88 -- Meaning of [`format`]{.rm} conversion specifiers
+
+--------------------------------------------------------------------------------
+Specifier Replacement
+--------- ----------------------------------------------------------------------
+`%a`      The locale’s abbreviated weekday name. If the value does not contain a
+          valid weekday, [`setstate(ios::failbit)` is called]{.rm}
+          [`format_error` is thrown]{.add}.
+
+`%A`      The locale’s full weekday name. If the value does not contain a valid
+          weekday, [`setstate(ios::failbit)` is called]{.rm}
+          [`format_error` is thrown]{.add}.
+
+`%b`      The locale’s abbreviated month name. If the value does not contain a
+          valid month, [`setstate(ios::failbit)` is called]{.rm}
+          [`format_error` is thrown]{.add}.
+
+TODO      remaining conversion specifiers
+--------------------------------------------------------------------------------
+
+> ::: add
+> If the format specification contains no conversion specifiers then the
+> chrono object is formatted as if by streaming it to `std::ostringstream` `os`
+> and copying `os.str()` through the output iterator of the context with
+> additional padding and adjustments as per format specifiers.
+> :::
+
+> ::: add
+> [_Example:_
+> ```
+>   string s = format("{:>8}", 42ms); // s == "    42ms"
+> ```
+> _--- end example_]
+> :::
+
+TODO: global or C locale?
 
 ## Changes to P0645 Text Formatting
 
@@ -625,17 +755,29 @@ Modify section 19.20.2 Formatting functions
 > *Throws:* `format_error` if `fmt` is not a valid format string.
 > :::
 
-TODO: rephrase locale handling
+TODO: remaining functions
 
-```c++
-template<class O, class charT> requires OutputIterator<O, const charT&>
-  class basic_format_context {
-  public:
-    std::locale locale();
-    // ...
-  };
+Modify section 19.20.3.3 Class template `basic_format_context`
+[[format.context]](http://fmtlib.net/P0645R4.html#format.context):
 
+```diff
+  template<class O, class charT> requires OutputIterator<O, const charT&>
+    class basic_format_context {
+    public:
+...
+      basic_format_arg<basic_format_context> arg(size_t id) const;
++     std::locale locale();
+...
+    };
 ```
+
+> ::: add
+> ```
+> std::locale locale();
+> ```
+> _Returns_: The locale passed to a formatting function if the latter takes one
+> or `std::locale()` otherwise.
+> :::
 
 ---
 references:
