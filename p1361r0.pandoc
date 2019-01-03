@@ -453,22 +453,16 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.
 +   struct formatter<sys_time<Duration>, charT>;
 ```
 
-> ::: rm
-> \pnum{7} *Effects:* Streams `tp` into `os` using the format specified by the
-> NTCTS `fmt`. `fmt` encoding follows the rules specified in 25.11. If `%Z`
-> is used, it will be replaced with `"UTC"` widened to `charT`. If `%z` is used
-> (or a modified variant of `%z`), an offset of `0min` will be formatted.
->
-> \pnum{8} *Returns:* `os`.
-> :::
-
-> ::: add
-> The specialization is enabled and the format string encoding follows the rules
-> specified in
-> [25.11](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#section.25.11).
+> \pnum{7} [*Effects:* Streams `tp` into `os` using the format specified by the
+> NTCTS `fmt`. `fmt` encoding follows the rules specified in 25.11.]{.rm}
+> [The specialization is enabled and the format string encoding follows the rules
+> specified in 25.11.]{.add}
 > If `%Z` is used, it will be replaced with `"UTC"` widened to `charT`. If `%z`
 > is used (or a modified variant of `%z`), an offset of `0min` will be
 > formatted.
+
+> ::: rm
+> \pnum{8} *Returns:* `os`.
 > :::
 
 Modify section 25.7.2.3 Non-member functions [[time.clock.utc.nonmembers]](
@@ -493,30 +487,21 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.
 +   struct formatter<utc_time<Duration>, charT>;
 ```
 
+> \pnum{3} [*Effects:* Streams `tp` into `os` using the format specified by the
+> NTCTS `fmt`. `fmt` encoding follows the rules specified in 25.11.]{.rm}
+> [The specialization is enabled and the format string encoding follows the rules
+> specified in 25.11.]{.add}
+> If `%Z`is used, it will be replaced with `"UTC"` widened to `charT`. If `%z`
+> is used (or a modified variant of `%z`), an offset of `0min` will be
+> formatted. If `tp` represents a time during a leap second insertion, and if a
+> seconds field is formatted, the integral portion of that format shall be `"60"`
+> widened to `charT`.
+
 > ::: rm
-> \pnum{3} *Effects:* Streams `tp` into `os` using the format specified by the
-> NTCTS `fmt`. `fmt` encoding follows the rules specified in 25.11. If `%Z`
-> is used, it will be replaced with `"UTC"` widened to `charT`. If `%z` is used
-> (or a modified variant of `%z`), an offset of `0min` will be formatted. If
-> `tp` represents a time during a leap second insertion, and if a seconds field
-> is formatted, the integral portion of that format shall be `"60"` widened to
-> `charT`.
->
 > \pnum{4} *Returns:* `os`.
 > :::
 
-> ::: add
-> The specialization is enabled and the format string encoding follows the rules
-> specified in
-> [25.11](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#section.25.11).
-> If `%Z` is used, it will be replaced with `"UTC"` widened to `charT`. If `%z`
-> is used (or a modified variant of `%z`), an offset of `0min` will be
-> formatted. If `tp` represents a time during a leap second insertion, and if a
-> seconds field is formatted, the integral portion of that format shall be
-> `"60"` widened to `charT`.
-> :::
-
-Modify section 25.7.3.3 Non-member functions [time.clock.tai.nonmembers](
+Modify section 25.7.3.3 Non-member functions [[time.clock.tai.nonmembers]](
 http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.7.3.3):
 
 > ::: rm
@@ -524,8 +509,129 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.
 > containing `"%F %T"` widened to `charT`.
 > :::
 > ::: add
-> \pnum{1} *Effects:* Equivalent to `os << format(fmt, t)`, where `fmt` is a
-> string containing `"{:%F %T}"` widened to `charT`.
+> *Effects:* Equivalent to `os << format(fmt, t)`, where `fmt` is a string
+> containing `"{:%F %T}"` widened to `charT`.
+> :::
+
+```diff
+- template<class charT, class traits, class Duration>
+-   basic_ostream<charT, traits>&
+-     to_stream(basic_ostream<charT, traits>& os, const charT* fmt, const tai_time<Duration>& tp);
++ template<class Duration, class charT>
++   struct formatter<tai_time<Duration>, charT>;
+```
+
+> \pnum{3} [*Effects:* Streams `tp` into `os` using the format specified by the
+> NTCTS `fmt`. `fmt` encoding follows the rules specified in 25.11.]{.rm}
+> [The specialization is enabled and the format string encoding follows the rules
+> specified in 25.11.]{.add}
+> If `%Z` is used, it will be replaced with `"TAI"`. If `%z` is used (or a
+> modified variant of `%z`), an offset of `0min` will be formatted. The date
+> and time formatted shall be equivalent to that formatted by a `sys_time`
+> initialized with:
+> ```
+> sys_time<Duration>{tp.time_since_epoch()} -
+>   (sys_days{1970y/January/1} - sys_days{1958y/January/1})
+> ```
+
+> ::: rm
+> \pnum{4} *Returns:* `os`.
+> :::
+
+> \pnum{5} [_Example_:
+> ```diff
+>   auto st = sys_days{2000y/January/1};
+>   auto tt = clock_cast<tai_clock>(st);
+> - cout << format("%F %T %Z == ", st) << format("%F %T %Z\n", tt);
+> + cout << format("{0:%F %T %Z} == {1:%F %T %Z}\n", st, tt);
+> ```
+> Produces this output:
+> ```
+> 2000-01-01 00:00:00 UTC == 2000-01-01 00:00:32 TAI
+> ```
+> --- _end example_]
+
+Modify section 25.7.4.3 Non-member functions [[time.clock.gps.nonmembers]](
+http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.7.4.3):
+
+> ::: rm
+> \pnum{1} *Effects:* Calls `to_stream(os, fmt, t)`, where `fmt` is a string
+> containing `"%F %T"` widened to `charT`.
+> :::
+> ::: add
+> *Effects:* Equivalent to `os << format(fmt, t)`, where `fmt` is a string
+> containing `"{:%F %T}"` widened to `charT`.
+> :::
+
+```diff
+- template<class charT, class traits, class Duration>
+-   basic_ostream<charT, traits>&
+-     to_stream(basic_ostream<charT, traits>& os, const charT* fmt, const gps_time<Duration>& tp);
++ template<class Duration, class charT>
++   struct formatter<gps_time<Duration>, charT>;
+```
+> \pnum{3} [*Effects:* Streams `tp` into `os` using the format specified by the
+> NTCTS `fmt`. `fmt` encoding follows the rules specified in 25.11.]{.rm}
+> [The specialization is enabled and the format string encoding follows the rules
+> specified in 25.11.]{.add}
+> If `%Z` is used, it will be replaced with `"GPS"`. If `%z` is used (or a
+> modified variant of `%z`), an offset of `0min` will be formatted. The date
+> and time formatted shall be equivalent to that formatted by a `sys_time`
+> initialized with:
+> ```
+> sys_time<Duration>{tp.time_since_epoch()} +
+>   (sys_days{1980y/January/Sunday[1]} - sys_days{1970y/January/1})
+> ```
+
+> ::: rm
+> \pnum{4} *Returns:* `os`.
+> :::
+
+> \pnum{5} [_Example_:
+> ```diff
+>   auto st = sys_days{2000y/January/1};
+>   auto gt = clock_cast<gps_clock>(st);
+> - cout << format("%F %T %Z == ", st) << format("%F %T %Z\n", gt);
+> + cout << format("{0:%F %T %Z} == {1:%F %T %Z}\n", st, gt);
+> ```
+> Produces this output:
+> ```
+> 2000-01-01 00:00:00 UTC == 2000-01-01 00:00:13 GPS
+> ```
+> --- _end example_]
+
+Modify section 25.7.5.3 Non-member functions [[time.clock.file.nonmembers]](
+http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.7.5.3):
+
+> ::: rm
+> \pnum{1} *Effects:* Calls `to_stream(os, fmt, t)`, where `fmt` is a string
+> containing `"%F %T"` widened to `charT`.
+> :::
+> ::: add
+> *Effects:* Equivalent to `os << format(fmt, t)`, where `fmt` is a string
+> containing `"{:%F %T}"` widened to `charT`.
+> :::
+
+```diff
+- template<class charT, class traits, class Duration>
+-   basic_ostream<charT, traits>&
+-     to_stream(basic_ostream<charT, traits>& os, const charT* fmt, const file_time<Duration>& tp);
++ template<class Duration, class charT>
++   struct formatter<file_time<Duration>, charT>;
+```
+
+> \pnum{3} [*Effects:* Streams `tp` into `os` using the format specified by the
+> NTCTS `fmt`. `fmt` encoding follows the rules specified in 25.11.]{.rm}
+> [The specialization is enabled and the format string encoding follows the rules
+> specified in 25.11.]{.add}
+> If `%Z` is used, it will be replaced with `"UTC"` widened to `charT`. If `%z`
+> is used > (or a modified variant of `%z` ), an offset of `0min` will be
+> formatted. The > date and time formatted shall be equivalent to that formatted
+> by a `sys_time` initialized with `clock_cast<system_clock>(tp)`, or by a
+> `utc_time` initialized with `clock_cast<utc_clock>(tp)`.
+
+> ::: rm
+> \pnum{4} *Returns:* `os`.
 > :::
 
 TODO: replace all `to_stream` overloads with `formatter` specializations and
