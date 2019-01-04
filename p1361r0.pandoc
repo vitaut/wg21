@@ -206,12 +206,17 @@ template<class charT, class traits, class Duration>
 -     to_stream(basic_ostream<charT, traits>& os, const charT* fmt,
 -               const local_time<Duration>& tp,
 -               const string* abbrev = nullptr, const seconds* offset_sec = nullptr);
++ template<class Duration> struct local_time_format_t; // exposition-only
++
++ template<class Duration>
++   local_time_format_t<Duration>
++     local_time_format(local_time<Duration> time, const string* abbrev = nullptr,
++                       const seconds* offset_sec = nullptr);
++
 + template<class Duration, class charT>
 +   struct formatter<local_time<Duration>, charT>;
-+
-+ template<class Duration> struct local_time_format;
 + template<class Duration, class charT>
-+   struct formatter<local_time_format<Duration>, charT>;
++   struct formatter<local_time_format_t<Duration>, charT>;
 
 ...
 
@@ -632,6 +637,187 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.
 
 > ::: rm
 > \pnum{4} *Returns:* `os`.
+> :::
+
+Modify section 25.7.8 Local time [[time.clock.local]](
+http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsection.25.7.8):
+
+```diff
+- template<class charT, class traits, class Duration>
+-   basic_ostream<charT, traits>&
+-     to_stream(basic_ostream<charT, traits>& os, const charT* fmt, const local_time<Duration>& tp,
+-               const string* abbrev = nullptr, const seconds* offset_sec = nullptr);
++ template<class Duration, class charT>
++   struct formatter<local_time<Duration>, charT>;
+```
+> ::: rm
+> \pnum{4} *Effects:* Streams `tp` into `os` using the format specified by the
+> NTCTS `fmt`. `fmt` encoding follows the rules specified in 25.11.
+> If `%Z` is used, it will be replaced with `*abbrev` if `abbrev` is not equal
+> to `nullptr`. If `abbrev` is equal to `nullptr` (and `%Z` is used),
+> `os.setstate(ios_base::failbit)` shall be called. If `%z` is used (or a
+> modified variant of `%z`), it will be formatted with the value of
+> `*offset_sec` if `offset_sec` is not equal to `nullptr`. If `%z` (or a
+> modified variant of `%z`) is used, and `offset_sec` is equal to `nullptr`,
+> then `os.setstate(ios_base::failbit)` shall be called.
+> :::
+> ::: add
+> The specialization is enabled and the format string encoding
+> follows the rules specified in 25.11. If `%Z`, `%z`, or a modified version of
+> `%z` is used, `format_error` shall be thrown.
+> :::
+
+> ::: rm
+> \pnum{4} *Returns:* `os`.
+> :::
+
+```diff
++ template<class Duration> struct local_time_format_t { // exposition-only
++   local_time<Duration> time;
++   const string* abbrev;
++   const seconds* offset_sec;
++ };
++
++ template<class Duration>
++   local_time_format_t<Duration>
++     local_time_format(local_time<Duration> time, const string* abbrev = nullptr,
++                       const seconds* offset_sec = nullptr);
+```
+
+> ::: add
+> *Returns:* `{time, abbrev, offset_sec}`.
+> :::
+
+```diff
++ template<class Duration, class charT>
++   struct formatter<local_time_format_t<Duration>, charT>;
+```
+
+> ::: add
+> The specialization is enabled and the format string encoding
+> follows the rules specified in 25.11. Let `f` be a
+> `local_time_format_t<Duration>` object passed to `formatter::format`. If `%Z`
+> is used, it will be replaced with `*f.abbrev` if `f.abbrev` is not equal
+> to `nullptr`. If `f.abbrev` is equal to `nullptr` (and `%Z` is used),
+> `format_error` shall be thrown. If `%z` is used (or a
+> modified variant of `%z`), it will be formatted with the value of
+> `*f.offset_sec` if `f.offset_sec` is not equal to `nullptr`. If `%z` (or a
+> modified variant of `%z`) is used, and `f.offset_sec` is equal to `nullptr`,
+> then `format_error` shall be thrown.
+> :::
+
+Modify section 25.8.3.3 Non-member functions [[time.cal.day.nonmembers]](
+http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.8.3.3):
+
+> \pnum{7} *Effects:* Inserts `format(fmt, d)` where `fmt` is
+> [`"%d"`]{.rm}[`"{:%d}"`]{.add} widened to `charT`. If `!d.ok()`, appends with
+>`" is not a valid day"`.
+
+```diff
+- template<class charT, class traits>
+-   basic_ostream<charT, traits>&
+-     to_stream(basic_ostream<charT, traits>& os, const charT* fmt, const day& d);
++ template<class charT>
++   struct formatter<day, charT>;
+```
+
+> ::: rm
+> \pnum{9} *Effects:* Streams `d` into `os` using the format specified by the
+> NTCTS `fmt`. `fmt` encoding follows the rules specified in 25.11.
+> :::
+> ::: add
+> The specialization is enabled and the format string encoding follows the rules
+> specified in 25.11.
+> :::
+
+> ::: rm
+> \pnum{10} *Returns:* `os`.
+> :::
+
+Modify section 25.8.4.3 Non-member functions [[time.cal.month.nonmembers]](
+http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.8.4.3):
+
+> \pnum{7} *Effects:* If `m.ok() == true` inserts `format(os.getloc(), fmt, m)`
+> where `fmt` is [`"%b"`]{.rm}[`"{:%b}"`]{.add} widened to `charT`. Otherwise
+> inserts `unsigned{m} << is not a valid month"`.
+
+```diff
+- template<class charT, class traits>
+-   basic_ostream<charT, traits>&
+-     to_stream(basic_ostream<charT, traits>& os, const charT* fmt, const month& m);
++ template<class charT>
++   struct formatter<month, charT>;
+```
+
+> ::: rm
+> \pnum{9} *Effects:* Streams `m` into `os` using the format specified by the
+> NTCTS `fmt`. `fmt` encoding follows the rules specified in 25.11.
+> :::
+> ::: add
+> The specialization is enabled and the format string encoding follows the rules
+> specified in 25.11.
+> :::
+
+> ::: rm
+> \pnum{10} *Returns:* `os`.
+> :::
+
+Modify section 25.8.5.3 Non-member functions [[time.cal.year.nonmembers]](
+http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.8.5.3):
+
+> \pnum{7} *Effects:* Inserts `format(fmt, y)` where `fmt` is
+> [`"%Y"`]{.rm}[`"{%Y:}"`]{.add} widened to `charT`. If `!y.ok()`, appends with
+> " is not a valid year".
+
+```diff
+- template<class charT, class traits>
+-   basic_ostream<charT, traits>&
+-     to_stream(basic_ostream<charT, traits>& os, const charT* fmt, const year& y);
++ template<class charT>
++   struct formatter<year, charT>;
+```
+
+> ::: rm
+> \pnum{9} *Effects:* Streams `y` into `os` using the format specified by the
+> NTCTS `fmt`. `fmt` encoding follows the rules specified in 25.11.
+> :::
+> ::: add
+> The specialization is enabled and the format string encoding follows the rules
+> specified in 25.11.
+> :::
+
+> ::: rm
+> \pnum{10} *Returns:* `os`.
+> :::
+
+Modify section 25.8.6.3 Non-member functions [[time.cal.wd.nonmembers]](
+http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.8.6.3):
+
+> \pnum{6} *Effects:* If `wd.ok() == true` inserts `format(os.getloc(), fmt, m)`
+> where `fmt` is [`"%a"`]{.rm}[`"{:%a}"`]{.add} widened to `charT`. Otherwise
+> inserts `unsigned{m} << is not a valid weekday"`.
+
+TODO: why insert garbage instead of reporting an error?
+
+```diff
+- template<class charT, class traits>
+-   basic_ostream<charT, traits>&
+-     to_stream(basic_ostream<charT, traits>& os, const charT* fmt, const weekday& wd);
++ template<class charT>
++   struct formatter<weekday, charT>;
+```
+
+> ::: rm
+> \pnum{8} *Effects:* Streams `wd` into `os` using the format specified by the
+> NTCTS `fmt`. `fmt` encoding follows the rules specified in 25.11.
+> :::
+> ::: add
+> The specialization is enabled and the format string encoding follows the rules
+> specified in 25.11.
+> :::
+
+> ::: rm
+> \pnum{9} *Returns:* `os`.
 > :::
 
 TODO: replace all `to_stream` overloads with `formatter` specializations and
