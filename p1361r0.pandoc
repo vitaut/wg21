@@ -89,6 +89,22 @@ Integrating the two proposals provides the following advantages:
    std::cout << std::format("{0:>20%Y-%m-%d}\n", birthday);
    ```
 
+5. Improve control over formatting:
+
+   **Before**
+   ```cpp
+   std::cout << std::left << std::setw(8) << Sunday[2] << "game\n";
+   // prints "Sun     [2]game"
+   //                 ^ note misaligned index and width applying only to
+   //                   Sunday
+   ```
+
+   **After**
+   ```cpp
+   std::cout << std::format("{0:<8}{1}\n", Sunday[2], "game");
+   // prints "Sun[2]  game"
+   ```
+
 # Locale
 
 One feature that [@P0355] has and [@P0645] doesn't is the ability to pass a
@@ -352,7 +368,7 @@ template<class charT, class traits, class Duration>
 
   template<class charT, class traits>
     basic_ostream<charT, traits>&
-      operator<<(basic_ostream<charT, traits>& os, const year_month_weekday& ymwdi);
+      operator<<(basic_ostream<charT, traits>& os, const year_month_weekday& ymwd);
 + template<class charT>
 +   struct formatter<year_month_weekday, charT>;
 
@@ -447,8 +463,9 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsection.25.
 > [25.11](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#section.25.11).
 > :::
 
-Modify section 25.7.1.3 Non-member functions [[time.clock.system.nonmembers]](
-http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.7.1.3):
+Rename section 25.7.1.3 Non-member functions [[time.clock.system.nonmembers]](
+http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.7.1.3)
+to 25.7.1.3 Nonmembers [time.clock.system.nonmembers] and modify it:
 
 ```diff
 - template<class charT, class traits, class Duration>
@@ -470,8 +487,9 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.
 > \pnum{8} *Returns:* `os`.
 > :::
 
-Modify section 25.7.2.3 Non-member functions [[time.clock.utc.nonmembers]](
-http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.7.2.3):
+Rename section 25.7.2.3 Non-member functions [[time.clock.utc.nonmembers]](
+http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.7.2.3)
+to 25.7.2.3 Nonmembers [time.clock.utc.nonmembers] and modify it:
 
 > ::: rm
 > \pnum{1} *Effects:* Calls `to_stream(os, fmt, t)`, where `fmt` is a string
@@ -506,8 +524,9 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.
 > \pnum{4} *Returns:* `os`.
 > :::
 
-Modify section 25.7.3.3 Non-member functions [[time.clock.tai.nonmembers]](
-http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.7.3.3):
+Rename section 25.7.3.3 Non-member functions [[time.clock.tai.nonmembers]](
+http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.7.3.3)
+to 25.7.3.3 Nonmembers [time.clock.tai.nonmembers] and modify it:
 
 > ::: rm
 > \pnum{1} *Effects:* Calls `to_stream(os, fmt, t)`, where `fmt` is a string
@@ -556,8 +575,9 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.
 > ```
 > --- _end example_]
 
-Modify section 25.7.4.3 Non-member functions [[time.clock.gps.nonmembers]](
-http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.7.4.3):
+Rename section 25.7.4.3 Non-member functions [[time.clock.gps.nonmembers]](
+http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.7.4.3)
+to 25.7.4.3 Nonmembers [time.clock.gps.nonmembers] and modify it:
 
 > ::: rm
 > \pnum{1} *Effects:* Calls `to_stream(os, fmt, t)`, where `fmt` is a string
@@ -605,8 +625,9 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.
 > ```
 > --- _end example_]
 
-Modify section 25.7.5.3 Non-member functions [[time.clock.file.nonmembers]](
-http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.7.5.3):
+Rename section 25.7.5.3 Non-member functions [[time.clock.file.nonmembers]](
+http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.7.5.3)
+to 25.7.5.3 Nonmembers [time.clock.file.nonmembers] and modify it:
 
 > ::: rm
 > \pnum{1} *Effects:* Calls `to_stream(os, fmt, t)`, where `fmt` is a string
@@ -706,8 +727,9 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsection.25.
 > then `format_error` shall be thrown.
 > :::
 
-Modify section 25.8.3.3 Non-member functions [[time.cal.day.nonmembers]](
-http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.8.3.3):
+Rename section 25.8.3.3 Non-member functions [[time.cal.day.nonmembers]](
+http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.8.3.3)
+to 25.8.3.3 Nonmembers [time.cal.day.nonmembers] and modify it:
 
 > \pnum{7} *Effects:* Inserts `format(fmt, d)` where `fmt` is
 > [`"%d"`]{.rm}[`"{:%d}"`]{.add} widened to `charT`. If `!d.ok()`, appends with
@@ -734,8 +756,9 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.
 > \pnum{10} *Returns:* `os`.
 > :::
 
-Modify section 25.8.4.3 Non-member functions [[time.cal.month.nonmembers]](
-http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.8.4.3):
+Rename section 25.8.4.3 Non-member functions [[time.cal.month.nonmembers]](
+http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.8.4.3)
+to 25.8.4.3 Nonmembers [time.cal.month.nonmembers] and modify it:
 
 > \pnum{7} *Effects:* If `m.ok() == true` inserts `format(os.getloc(), fmt, m)`
 > where `fmt` is [`"%b"`]{.rm}[`"{:%b}"`]{.add} widened to `charT`. Otherwise
@@ -762,8 +785,9 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.
 > \pnum{10} *Returns:* `os`.
 > :::
 
-Modify section 25.8.5.3 Non-member functions [[time.cal.year.nonmembers]](
-http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.8.5.3):
+Rename section 25.8.5.3 Non-member functions [[time.cal.year.nonmembers]](
+http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.8.5.3)
+to 25.8.5.3 Nonmembers [time.cal.year.nonmembers] and modify it:
 
 > \pnum{7} *Effects:* Inserts `format(fmt, y)` where `fmt` is
 > [`"%Y"`]{.rm}[`"{%Y:}"`]{.add} widened to `charT`. If `!y.ok()`, appends with
@@ -790,14 +814,13 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.
 > \pnum{10} *Returns:* `os`.
 > :::
 
-Modify section 25.8.6.3 Non-member functions [[time.cal.wd.nonmembers]](
-http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.8.6.3):
+Rename section 25.8.6.3 Non-member functions [[time.cal.wd.nonmembers]](
+http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.8.6.3)i
+to 25.8.6.3 Nonmembers [time.cal.wd.nonmembers] and modify it:
 
 > \pnum{6} *Effects:* If `wd.ok() == true` inserts `format(os.getloc(), fmt, m)`
 > where `fmt` is [`"%a"`]{.rm}[`"{:%a}"`]{.add} widened to `charT`. Otherwise
 > inserts `unsigned{m} << is not a valid weekday"`.
-
-TODO: why insert garbage instead of reporting an error?
 
 ```diff
 - template<class charT, class traits>
@@ -818,6 +841,275 @@ TODO: why insert garbage instead of reporting an error?
 
 > ::: rm
 > \pnum{9} *Returns:* `os`.
+> :::
+
+Rename section 25.8.7.3 Non-member functions [[time.cal.wdidx.nonmembers]](
+http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.8.7.3)i
+to 25.8.7.3 Nonmembers [time.cal.wdidx.nonmembers] and modify it:
+
+```diff
++ template<class charT>
++   struct formatter<weekday_indexed, charT>;
+```
+
+> ::: add
+> The specialization is enabled and the format string encoding follows the rules
+> specified in 25.11.
+> :::
+
+Rename section 25.8.8.3 Non-member functions [[time.cal.wdlast.nonmembers]](
+http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.8.8.3)i
+to 25.8.8.3 Nonmembers [time.cal.wdlast.nonmembers] and modify it:
+
+```diff
++ template<class charT>
++   struct formatter<weekday_last, charT>;
+```
+
+> ::: add
+> The specialization is enabled and the format string encoding follows the rules
+> specified in 25.11.
+> :::
+
+Rename section 25.8.9.3 Non-member functions [[time.cal.md.nonmembers]](
+http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.8.9.3)i
+to 25.8.9.3 Nonmembers [time.cal.md.nonmembers] and modify it:
+
+```diff
+- template<class charT, class traits>
+-   basic_ostream<charT, traits>&
+-     to_stream(basic_ostream<charT, traits>& os, const charT* fmt, const month_day& md);
++ template<class charT>
++   struct formatter<month_day, charT>;
+```
+
+> ::: rm
+> \pnum{8} *Effects:* Streams `md` into `os` using the format specified by the
+> NTCTS `fmt`. `fmt` encoding follows the rules specified in 25.11.
+> :::
+> ::: add
+> The specialization is enabled and the format string encoding follows the rules
+> specified in 25.11.
+> :::
+
+> ::: rm
+> \pnum{9} *Returns:* `os`.
+> :::
+
+Modify section 25.8.10 Class `month_day_last` [[time.cal.mdlast]](
+http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsection.25.8.10):
+
+```diff
++ template<class charT>
++   struct formatter<month_day_last, charT>;
+```
+
+> ::: add
+> The specialization is enabled and the format string encoding follows the rules
+> specified in 25.11.
+> :::
+
+Rename section 25.8.11.3 Non-member functions [[time.cal.mwd.nonmembers]](
+http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.8.11.3)
+to 25.8.11.3 Nonmembers [time.cal.mwd.nonmembers] and modify it:
+
+```diff
++ template<class charT>
++   struct formatter<month_weekday, charT>;
+```
+
+> ::: add
+> The specialization is enabled and the format string encoding follows the rules
+> specified in 25.11.
+> :::
+
+Rename section 25.8.12.3 Non-member functions [[time.cal.mwdlast.nonmembers]](
+http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.8.12.3)
+to 25.8.12.3 Nonmembers [time.cal.mwdlast.nonmembers] and modify it:
+
+```diff
++ template<class charT>
++   struct formatter<month_weekday_last, charT>;
+```
+
+> ::: add
+> The specialization is enabled and the format string encoding follows the rules
+> specified in 25.11.
+> :::
+
+Rename section 25.8.13.3 Non-member functions [[time.cal.ym.nonmembers]](
+http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.8.13.3)
+to 25.8.13.3 Nonmembers [time.cal.ym.nonmembers] and modify it:
+
+```diff
+- template<class charT, class traits>
+-   basic_ostream<charT, traits>&
+-     to_stream(basic_ostream<charT, traits>& os, const charT* fmt, const year_month& ym);
++ template<class charT>
++   struct formatter<year_month, charT>;
+```
+
+> ::: rm
+> \pnum{11} *Effects:* Streams `ym` into `os` using the format specified by the
+> NTCTS `fmt`. `fmt` encoding follows the rules specified in 25.11.
+> :::
+> ::: add
+> The specialization is enabled and the format string encoding follows the rules
+> specified in 25.11.
+> :::
+
+> ::: rm
+> \pnum{12} *Returns:* `os`.
+> :::
+
+Rename section 25.8.14.3 Non-member functions [[time.cal.ymd.nonmembers]](
+http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.8.14.3)
+to 25.8.14.3 Nonmembers [time.cal.ymd.nonmembers] and modify it:
+
+> \pnum{11} *Effects:* Inserts `format(fmt, ymd)` where `fmt` is
+> [`"%F"`]{.rm}[`"{:%F}"`]{.add} widened to `charT`. If `!ymd.ok()`, appends
+> with `" is not a valid date"`.
+
+```diff
+- template<class charT, class traits>
+-   basic_ostream<charT, traits>&
+-     to_stream(basic_ostream<charT, traits>& os, const charT* fmt, const year_month_day& ymd);
++ template<class charT>
++   struct formatter<year_month_day, charT>;
+```
+
+> ::: rm
+> \pnum{13} *Effects:* Streams `ym` into `os` using the format specified by the
+> NTCTS `fmt`. `fmt` encoding follows the rules specified in 25.11.
+> :::
+> ::: add
+> The specialization is enabled and the format string encoding follows the rules
+> specified in 25.11.
+> :::
+
+> ::: rm
+> \pnum{14} *Returns:* `os`.
+> :::
+
+Rename section 25.8.15.3 Non-member functions [[time.cal.ymdlast.nonmembers]](
+http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.8.15.3)
+to 25.8.15.3 Nonmembers [time.cal.ymdlast.nonmembers] and modify it:
+
+```diff
++ template<class charT>
++   struct formatter<year_month_day_last, charT>;
+```
+
+> ::: add
+> The specialization is enabled and the format string encoding follows the rules
+> specified in 25.11.
+> :::
+
+Rename section 25.8.16.3 Non-member functions [[time.cal.ymwd.nonmembers]](
+http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.8.16.3)
+to 25.8.16.3 Nonmembers [time.cal.ymwd.nonmembers] and modify it:
+
+```diff
++ template<class charT>
++   struct formatter<year_month_weekday, charT>;
+```
+
+> ::: add
+> The specialization is enabled and the format string encoding follows the rules
+> specified in 25.11.
+> :::
+
+Rename section 25.8.17.3 Non-member functions [[time.cal.ymwdlast.nonmembers]](
+http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.8.17.3)
+to 25.8.17.3 Nonmembers [time.cal.ymwdlast.nonmembers] and modify it:
+
+```diff
++ template<class charT>
++   struct formatter<year_month_weekday_last, charT>;
+```
+
+> ::: add
+> The specialization is enabled and the format string encoding follows the rules
+> specified in 25.11.
+> :::
+
+Modify section 25.9.6 Formatted output [[time.tod.io]](
+http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsection.25.9.6):
+
+```diff
++ template<class Rep, class Period, class charT>
++   struct formatter<time_of_day<duration<Rep, Period>>, charT>;
+```
+
+> ::: add
+> The specialization is enabled and the format string encoding follows the rules
+> specified in 25.11.
+> :::
+
+Modify section 25.10.4.1 Class `sys_info` [[time.zone.info.sys]](
+http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.10.4.1):
+
+```diff
++ templateclass charT>
++   struct formatter<sys_info, charT>;
+```
+
+> ::: add
+> The specialization is enabled and the format string encoding follows the rules
+> specified in 25.11.
+> :::
+
+Modify section 25.10.4.1 Class `local_info` [[time.zone.info.local]](
+http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.10.4.2):
+
+```diff
++ templateclass charT>
++   struct formatter<local_info, charT>;
+```
+
+> ::: add
+> The specialization is enabled and the format string encoding follows the rules
+> specified in 25.11.
+> :::
+
+Rename section 25.10.7.4 Non-member functions
+[[time.zone.zonedtime.nonmembers]](
+http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.10.7.4)
+to 25.10.7.4 Nonmembers [time.zone.zonedtime.nonmembers] and modify it:
+
+```diff
+- template<class charT, class traits, class Duration, class TimeZonePtr>
+-   basic_ostream<charT, traits>&
+-     to_stream(basic_ostream<charT, traits>& os, const charT* fmt,
+-               const zoned_time<Duration, TimeZonePtr>& tp);
++ template<class Duration, class TimeZonePtr, class charT>
++   struct formatter<zoned_time<Duration, TimeZonePtr>, charT>
++     : formatter<local_time_format_t<Duration>, charT> {
++   template <typename FormatContext>
++     auto format(const zoned_time<Duration, TimeZonePtr>& tp, FormatContext& ctx);
++ };
+```
+
+> ::: rm
+> \pnum{5} *Effects:* First obtains a `sys_info` via `tp.get_info()` which for
+> exposition purposes will be referred to as `info`. Then calls
+> `to_stream(os, fmt, tp.get_local_time(), &info.abbrev, &info.offset)`.
+> :::
+
+```diff
++ template <typename FormatContext>
++   auto format(const zoned_time<Duration, TimeZonePtr>& tp, FormatContext& ctx);
+```
+
+> ::: add
+> *Effects:* First obtains a `sys_info` via `tp.get_info()` which for exposition
+> purposes will be referred to as `info`. Then returns
+> `formatter<local_time_format_t<Duration>, charT>::format(
+> {tp.get_local_time(), &info.abbrev, &info.offset}, ctx)`.
+> :::
+
+> ::: rm
+> \pnum{6} *Returns:* `os`.
 > :::
 
 TODO: replace all `to_stream` overloads with `formatter` specializations and
