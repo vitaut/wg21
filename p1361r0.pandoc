@@ -148,8 +148,6 @@ Modify section 25.2 Header `<chrono>` synopsis
 -   basic_ostream<charT, traits>&
 -     to_stream(basic_ostream<charT, traits>& os, const charT* fmt,
 -               const duration<Rep, Period>& d);
-+ template<class Rep, class Period, class charT>
-+   struct formatter<duration<Rep, Period>, charT>;
 
 ...
 
@@ -161,8 +159,6 @@ Modify section 25.2 Header `<chrono>` synopsis
 -   basic_ostream<charT, traits>&
 -     to_stream(basic_ostream<charT, traits>& os, const charT* fmt,
 -               const sys_time<Duration>& tp);
-+ template<class Duration, class charT>
-+   struct formatter<sys_time<Duration>, charT>;
 
 ...
 
@@ -173,8 +169,6 @@ Modify section 25.2 Header `<chrono>` synopsis
 -   basic_ostream<charT, traits>&
 -     to_stream(basic_ostream<charT, traits>& os, const charT* fmt,
 -               const utc_time<Duration>& tp);
-+ template<class Duration, class charT>
-+   struct formatter<utc_time<Duration>, charT>;
 
 ...
 
@@ -185,8 +179,6 @@ Modify section 25.2 Header `<chrono>` synopsis
 -   basic_ostream<charT, traits>&
 -     to_stream(basic_ostream<charT, traits>& os, const charT* fmt,
 -               const tai_time<Duration>& tp);
-+ template<class Duration, class charT>
-+   struct formatter<tai_time<Duration>, charT>;
 
 ...
 
@@ -197,8 +189,6 @@ Modify section 25.2 Header `<chrono>` synopsis
 -   basic_ostream<charT, traits>&
 -     to_stream(basic_ostream<charT, traits>& os, const charT* fmt,
 -               const gps_time<Duration>& tp);
-+ template<class Duration, class charT>
-+   struct formatter<gps_time<Duration>, charT>;
 
 ...
 
@@ -209,8 +199,6 @@ template<class charT, class traits, class Duration>
 -   basic_ostream<charT, traits>&
 -     to_stream(basic_ostream<charT, traits>& os, const charT* fmt,
 -               const file_time<Duration>& tp);
-+ template<class Duration, class charT>
-+   struct formatter<file_time<Duration>, charT>;
 
 ...
 
@@ -222,17 +210,6 @@ template<class charT, class traits, class Duration>
 -     to_stream(basic_ostream<charT, traits>& os, const charT* fmt,
 -               const local_time<Duration>& tp,
 -               const string* abbrev = nullptr, const seconds* offset_sec = nullptr);
-+ template<class Duration> struct local_time_format_t; // exposition-only
-+
-+ template<class Duration>
-+   local_time_format_t<Duration>
-+     local_time_format(local_time<Duration> time, const string* abbrev = nullptr,
-+                       const seconds* offset_sec = nullptr);
-+
-+ template<class Duration, class charT>
-+   struct formatter<local_time<Duration>, charT>;
-+ template<class Duration, class charT>
-+   struct formatter<local_time_format_t<Duration>, charT>;
 
 ...
 
@@ -242,8 +219,6 @@ template<class charT, class traits, class Duration>
 - template<class charT, class traits>
 -   basic_ostream<charT, traits>&
 -     to_stream(basic_ostream<charT, traits>& os, const charT* fmt, const day& d);
-+ template<class charT>
-+   struct formatter<day, charT>;
 
 ...
 
@@ -253,8 +228,6 @@ template<class charT, class traits, class Duration>
 - template<class charT, class traits>
 -   basic_ostream<charT, traits>&
 -     to_stream(basic_ostream<charT, traits>& os, const charT* fmt, const month& m);
-+ template<class charT>
-+   struct formatter<month, charT>;
 
 ...
 
@@ -265,8 +238,6 @@ template<class charT, class traits, class Duration>
 - template<class charT, class traits>
 -   basic_ostream<charT, traits>&
 -     to_stream(basic_ostream<charT, traits>& os, const charT* fmt, const year& y);
-+ template<class charT>
-+   struct formatter<year, charT>;
 
 ...
 
@@ -277,24 +248,6 @@ template<class charT, class traits, class Duration>
 - template<class charT, class traits>
 -   basic_ostream<charT, traits>&
 -     to_stream(basic_ostream<charT, traits>& os, const charT* fmt, const weekday& wd);
-+ template<class charT>
-+   struct formatter<weekday, charT>;
-
-...
-
-  template<class charT, class traits>
-    basic_ostream<charT, traits>&
-      operator<<(basic_ostream<charT, traits>& os, const weekday_indexed& wdi);
-+ template<class charT>
-+   struct formatter<weekday_indexed, charT>;
-
-...
-
-  template<class charT, class traits>
-    basic_ostream<charT, traits>&
-      operator<<(basic_ostream<charT, traits>& os, const weekday_last& wdl);
-+ template<class charT>
-+   struct formatter<weekday_last, charT>;
 
 ...
 
@@ -304,32 +257,6 @@ template<class charT, class traits, class Duration>
 - template<class charT, class traits>
 -   basic_ostream<charT, traits>&
 -     to_stream(basic_ostream<charT, traits>& os, const charT* fmt, const month_day& md);
-+ template<class charT>
-+   struct formatter<month_day, charT>;
-
-...
-
-  template<class charT, class traits>
-    basic_ostream<charT, traits>&
-       operator<<(basic_ostream<charT, traits>& os, const month_day_last& mdl);
-+ template<class charT>
-+   struct formatter<month_day_last, charT>;
-
-...
-
-  template<class charT, class traits>
-    basic_ostream<charT, traits>&
-      operator<<(basic_ostream<charT, traits>& os, const month_weekday& mwd);
-+ template<class charT>
-+   struct formatter<month_weekday, charT>;
-
-...
-
-  template<class charT, class traits>
-    basic_ostream<charT, traits>&
-      operator<<(basic_ostream<charT, traits>& os, const month_weekday_last& mwdl);
-+ template<class charT>
-+   struct formatter<month_weekday_last, charT>;
 
 ...
 
@@ -340,8 +267,6 @@ template<class charT, class traits, class Duration>
 - template<class charT, class traits>
 -   basic_ostream<charT, traits>&
 -     to_stream(basic_ostream<charT, traits>& os, const charT* fmt, const year_month& ym);
-+ template<class charT>
-+   struct formatter<year_month, charT>;
 
 ...
 
@@ -353,58 +278,6 @@ template<class charT, class traits, class Duration>
 -   basic_ostream<charT, traits>&
 -     to_stream(basic_ostream<charT, traits>& os, const charT* fmt,
 -               const year_month_day& ymd);
-+ template<class charT>
-+   struct formatter<year_month_day, charT>;
-
-...
-
-  template<class charT, class traits>
-    basic_ostream<charT, traits>&
-      operator<<(basic_ostream<charT, traits>& os, const year_month_day_last& ymdl);
-+ template<class charT>
-+   struct formatter<year_month_day_last, charT>;
-
-...
-
-  template<class charT, class traits>
-    basic_ostream<charT, traits>&
-      operator<<(basic_ostream<charT, traits>& os, const year_month_weekday& ymwd);
-+ template<class charT>
-+   struct formatter<year_month_weekday, charT>;
-
-...
-
-  template<class charT, class traits>
-    basic_ostream<charT, traits>&
-      operator<<(basic_ostream<charT, traits>& os, const year_month_weekday_last& ymwdl);
-+ template<class charT>
-+   struct formatter<year_month_weekday_last, charT>;
-
-...
-
-  template<class charT, class traits, class Rep, class Period>
-    basic_ostream<charT, traits>&
-      operator<<(basic_ostream<charT, traits>& os,
-                 const time_of_day<duration<Rep, Period>>& t);
-+ template<class Rep, class Period, class charT>
-+   struct formatter<time_of_day<duration<Rep, Period>>, charT>;
-
-...
-
-  // 25.10.4, information classes
-  struct sys_info;
-  template<class charT, class traits>
-    basic_ostream<charT, traits>&
-      operator<<(basic_ostream<charT, traits>& os, const sys_info& si);
-+ templateclass charT>
-+   struct formatter<sys_info, charT>;
-
-  struct local_info;
-  template<class charT, class traits>
-    basic_ostream<charT, traits>&
-      operator<<(basic_ostream<charT, traits>& os, const local_info& li);
-+ template<class charT>
-+   struct formatter<local_info, charT>;
 
 ...
 
@@ -417,12 +290,10 @@ template<class charT, class traits, class Duration>
 -   basic_ostream<charT, traits>&
 -     to_stream(basic_ostream<charT, traits>& os, const charT* fmt,
 -               const zoned_time<Duration, TimeZonePtr>& tp);
-+ template<class Duration, class TimeZonePtr, class charT>
-+   struct formatter<zoned_time<Duration, TimeZonePtr>, charT>;
 
 ...
 
-- // 25.11, formatting
+  // 25.11, formatting
 - template<class charT, class Streamable>
 -   basic_string<charT>
 -     format(const charT* fmt, const Streamable& s);
@@ -436,60 +307,101 @@ template<class charT, class traits, class Duration>
 -   basic_string<charT, traits, Alloc>
 -     format(const locale& loc, const basic_string<charT, traits, Alloc>& fmt,
 -            const Streamable& s);
++ namespace chrono {
++   template<class Duration> struct local_time_format_t; // exposition-only
++
++   template<class Duration>
++     local_time_format_t<Duration>
++       local_time_format(local_time<Duration> time, const string* abbrev = nullptr,
++                         const seconds* offset_sec = nullptr);
++ }
++
++ template<class Rep, class Period, class charT>
++   struct formatter<chrono::duration<Rep, Period>, charT>;
++ template<class Duration, class charT>
++   struct formatter<chrono::sys_time<Duration>, charT>;
++ template<class Duration, class charT>
++   struct formatter<chrono::utc_time<Duration>, charT>;
++ template<class Duration, class charT>
++   struct formatter<chrono::tai_time<Duration>, charT>;
++ template<class Duration, class charT>
++   struct formatter<chrono::gps_time<Duration>, charT>;
++ template<class Duration, class charT>
++   struct formatter<chrono::file_time<Duration>, charT>;
++ template<class Duration, class charT>
++   struct formatter<chrono::local_time<Duration>, charT>;
++ template<class Duration, class charT>
++   struct formatter<chrono::local_time_format_t<Duration>, charT>;
++ template<class charT> struct formatter<chrono::day, charT>;
++ template<class charT> struct formatter<chrono::month, charT>;
++ template<class charT> struct formatter<chrono::year, charT>;
++ template<class charT> struct formatter<chrono::weekday, charT>;
++ template<class charT> struct formatter<chrono::weekday_indexed, charT>;
++ template<class charT> struct formatter<chrono::weekday_last, charT>;
++ template<class charT> struct formatter<chrono::month_day, charT>;
++ template<class charT> struct formatter<chrono::month_day_last, charT>;
++ template<class charT> struct formatter<chrono::month_weekday, charT>;
++ template<class charT> struct formatter<chrono::month_weekday_last, charT>;
++ template<class charT> struct formatter<chrono::year_month, charT>;
++ template<class charT> struct formatter<chrono::year_month_day, charT>;
++ template<class charT> struct formatter<chrono::year_month_day_last, charT>;
++ template<class charT> struct formatter<chrono::year_month_weekday, charT>;
++ template<class charT> struct formatter<chrono::year_month_weekday_last, charT>;
++ template<class Rep, class Period, class charT>
++   struct formatter<chrono::time_of_day<duration<Rep, Period>>, charT>;
++ templateclass charT> struct formatter<chrono::sys_info, charT>;
++ template<class charT> struct formatter<chrono::local_info, charT>;
++ template<class Duration, class TimeZonePtr, class charT>
++   struct formatter<chrono::zoned_time<Duration, TimeZonePtr>, charT>;
 ```
 
 Modify section 25.5.10 I/O [[time.duration.io]](
 http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsection.25.5.10):
 
-```diff
-- template<class charT, class traits, class Rep, class Period>
--   basic_ostream<charT, traits>&
--     to_stream(basic_ostream<charT, traits>& os, const charT* fmt,
--               const duration<Rep, Period>& d);
-+ template<class Rep, class Period, class charT>
-+   struct formatter<duration<Rep, Period>, charT>;
-```
-
 > ::: rm
+> ```
+> template<class charT, class traits, class Rep, class Period>
+>   basic_ostream<charT, traits>&
+>     to_stream(basic_ostream<charT, traits>& os, const charT* fmt,
+>               const duration<Rep, Period>& d);
+> ```
+>
 > \pnum{6} *Effects:* Streams `d` into `os` using the format specified by the
 > NTCTS `fmt`. `fmt` encoding follows the rules specified in 25.11.
 >
 > \pnum{7} *Returns:* `os`.
 > :::
 
-> ::: add
-> The specialization is enabled and the format string encoding follows the rules
-> specified in
-> [25.11](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#section.25.11).
-> :::
+Modify section 25.7.1.3 Non-member functions [[time.clock.system.nonmembers]](
+http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.7.1.3):
 
-Rename section 25.7.1.3 Non-member functions [[time.clock.system.nonmembers]](
-http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.7.1.3)
-to 25.7.1.3 Nonmembers [time.clock.system.nonmembers] and modify it:
+<!-- This is needed for manipulators to work on the whole sys_time.
+     Locale is needed because time_of_day may print localized "a.m./p.m." -->
+> \pnum{2} *Effects:*
+> ```diff
+>   auto const dp = floor<days>(tp);
+> - os << year_month_day{dp} << ’ ’ << time_of_day{tp-dp};
+> + os << format(os.getloc(), "{} {}", year_month_day{dp}, time_of_day{tp-dp});
+> ```
 
-```diff
-- template<class charT, class traits, class Duration>
--   basic_ostream<charT, traits>&
--     to_stream(basic_ostream<charT, traits>& os, const charT* fmt, const sys_time<Duration>& tp);
-+ template<class Duration, class charT>
-+   struct formatter<sys_time<Duration>, charT>;
-```
-
-> \pnum{7} [*Effects:* Streams `tp` into `os` using the format specified by the
-> NTCTS `fmt`. `fmt` encoding follows the rules specified in 25.11.]{.rm}
-> [The specialization is enabled and the format string encoding follows the rules
-> specified in 25.11.]{.add}
+> ::: rm
+> ```
+> template<class charT, class traits, class Duration>
+>   basic_ostream<charT, traits>&
+>     to_stream(basic_ostream<charT, traits>& os, const charT* fmt, const sys_time<Duration>& tp);
+> ```
+>
+> \pnum{7} *Effects:* Streams `tp` into `os` using the format specified by the
+> NTCTS `fmt`. `fmt` encoding follows the rules specified in 25.11.
 > If `%Z` is used, it will be replaced with `"UTC"` widened to `charT`. If `%z`
 > is used (or a modified variant of `%z`), an offset of `0min` will be
 > formatted.
-
-> ::: rm
+>
 > \pnum{8} *Returns:* `os`.
 > :::
 
-Rename section 25.7.2.3 Non-member functions [[time.clock.utc.nonmembers]](
-http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.7.2.3)
-to 25.7.2.3 Nonmembers [time.clock.utc.nonmembers] and modify it:
+Modify section 25.7.2.3 Non-member functions [[time.clock.utc.nonmembers]](
+http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.7.2.3):
 
 > ::: rm
 > \pnum{1} *Effects:* Calls `to_stream(os, fmt, t)`, where `fmt` is a string
@@ -502,53 +414,45 @@ to 25.7.2.3 Nonmembers [time.clock.utc.nonmembers] and modify it:
 > string containing `"{:%F %T}"` widened to `charT`.
 > :::
 
-```diff
-- template<class charT, class traits, class Duration>
--   basic_ostream<charT, traits>&
--     to_stream(basic_ostream<charT, traits>& os, const charT* fmt, const utc_time<Duration>& tp);
-+ template<class Duration, class charT>
-+   struct formatter<utc_time<Duration>, charT>;
-```
-
-> \pnum{3} [*Effects:* Streams `tp` into `os` using the format specified by the
-> NTCTS `fmt`. `fmt` encoding follows the rules specified in 25.11.]{.rm}
-> [The specialization is enabled and the format string encoding follows the rules
-> specified in 25.11.]{.add}
+> ::: rm
+> ```
+> template<class charT, class traits, class Duration>
+>   basic_ostream<charT, traits>&
+>     to_stream(basic_ostream<charT, traits>& os, const charT* fmt, const utc_time<Duration>& tp);
+> ```
+>
+> \pnum{3} *Effects:* Streams `tp` into `os` using the format specified by the
+> NTCTS `fmt`. `fmt` encoding follows the rules specified in 25.11.
 > If `%Z`is used, it will be replaced with `"UTC"` widened to `charT`. If `%z`
 > is used (or a modified variant of `%z`), an offset of `0min` will be
 > formatted. If `tp` represents a time during a leap second insertion, and if a
 > seconds field is formatted, the integral portion of that format shall be `"60"`
 > widened to `charT`.
-
-> ::: rm
+>
 > \pnum{4} *Returns:* `os`.
 > :::
 
-Rename section 25.7.3.3 Non-member functions [[time.clock.tai.nonmembers]](
-http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.7.3.3)
-to 25.7.3.3 Nonmembers [time.clock.tai.nonmembers] and modify it:
+Modify section 25.7.3.3 Non-member functions [[time.clock.tai.nonmembers]](
+http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.7.3.3):
 
 > ::: rm
 > \pnum{1} *Effects:* Calls `to_stream(os, fmt, t)`, where `fmt` is a string
 > containing `"%F %T"` widened to `charT`.
 > :::
 > ::: add
-> *Effects:* Equivalent to `os << format(fmt, t)`, where `fmt` is a string
-> containing `"{:%F %T}"` widened to `charT`.
+> \pnum{1} *Effects:* Equivalent to `os << format(fmt, t)`, where `fmt` is a
+> string containing `"{:%F %T}"` widened to `charT`.
 > :::
 
-```diff
-- template<class charT, class traits, class Duration>
--   basic_ostream<charT, traits>&
--     to_stream(basic_ostream<charT, traits>& os, const charT* fmt, const tai_time<Duration>& tp);
-+ template<class Duration, class charT>
-+   struct formatter<tai_time<Duration>, charT>;
-```
-
-> \pnum{3} [*Effects:* Streams `tp` into `os` using the format specified by the
-> NTCTS `fmt`. `fmt` encoding follows the rules specified in 25.11.]{.rm}
-> [The specialization is enabled and the format string encoding follows the rules
-> specified in 25.11.]{.add}
+> ::: rm
+> ```
+> template<class charT, class traits, class Duration>
+>   basic_ostream<charT, traits>&
+>     to_stream(basic_ostream<charT, traits>& os, const charT* fmt, const tai_time<Duration>& tp);
+> ```
+>
+> \pnum{3} *Effects:* Streams `tp` into `os` using the format specified by the
+> NTCTS `fmt`. `fmt` encoding follows the rules specified in 25.11.
 > If `%Z` is used, it will be replaced with `"TAI"`. If `%z` is used (or a
 > modified variant of `%z`), an offset of `0min` will be formatted. The date
 > and time formatted shall be equivalent to that formatted by a `sys_time`
@@ -557,8 +461,7 @@ to 25.7.3.3 Nonmembers [time.clock.tai.nonmembers] and modify it:
 > sys_time<Duration>{tp.time_since_epoch()} -
 >   (sys_days{1970y/January/1} - sys_days{1958y/January/1})
 > ```
-
-> ::: rm
+>
 > \pnum{4} *Returns:* `os`.
 > :::
 
@@ -575,30 +478,27 @@ to 25.7.3.3 Nonmembers [time.clock.tai.nonmembers] and modify it:
 > ```
 > --- _end example_]
 
-Rename section 25.7.4.3 Non-member functions [[time.clock.gps.nonmembers]](
-http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.7.4.3)
-to 25.7.4.3 Nonmembers [time.clock.gps.nonmembers] and modify it:
+Modify section 25.7.4.3 Non-member functions [[time.clock.gps.nonmembers]](
+http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.7.4.3):
 
 > ::: rm
 > \pnum{1} *Effects:* Calls `to_stream(os, fmt, t)`, where `fmt` is a string
 > containing `"%F %T"` widened to `charT`.
 > :::
 > ::: add
-> *Effects:* Equivalent to `os << format(fmt, t)`, where `fmt` is a string
-> containing `"{:%F %T}"` widened to `charT`.
+> \pnum{1} *Effects:* Equivalent to `os << format(fmt, t)`, where `fmt` is a
+> string containing `"{:%F %T}"` widened to `charT`.
 > :::
 
-```diff
-- template<class charT, class traits, class Duration>
--   basic_ostream<charT, traits>&
--     to_stream(basic_ostream<charT, traits>& os, const charT* fmt, const gps_time<Duration>& tp);
-+ template<class Duration, class charT>
-+   struct formatter<gps_time<Duration>, charT>;
-```
-> \pnum{3} [*Effects:* Streams `tp` into `os` using the format specified by the
-> NTCTS `fmt`. `fmt` encoding follows the rules specified in 25.11.]{.rm}
-> [The specialization is enabled and the format string encoding follows the rules
-> specified in 25.11.]{.add}
+> ::: rm
+> ```
+> template<class charT, class traits, class Duration>
+>   basic_ostream<charT, traits>&
+>     to_stream(basic_ostream<charT, traits>& os, const charT* fmt, const gps_time<Duration>& tp);
+> ```
+>
+> \pnum{3} *Effects:* Streams `tp` into `os` using the format specified by the
+> NTCTS `fmt`. `fmt` encoding follows the rules specified in 25.11.
 > If `%Z` is used, it will be replaced with `"GPS"`. If `%z` is used (or a
 > modified variant of `%z`), an offset of `0min` will be formatted. The date
 > and time formatted shall be equivalent to that formatted by a `sys_time`
@@ -607,8 +507,7 @@ to 25.7.4.3 Nonmembers [time.clock.gps.nonmembers] and modify it:
 > sys_time<Duration>{tp.time_since_epoch()} +
 >   (sys_days{1980y/January/Sunday[1]} - sys_days{1970y/January/1})
 > ```
-
-> ::: rm
+>
 > \pnum{4} *Returns:* `os`.
 > :::
 
@@ -625,53 +524,47 @@ to 25.7.4.3 Nonmembers [time.clock.gps.nonmembers] and modify it:
 > ```
 > --- _end example_]
 
-Rename section 25.7.5.3 Non-member functions [[time.clock.file.nonmembers]](
-http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.7.5.3)
-to 25.7.5.3 Nonmembers [time.clock.file.nonmembers] and modify it:
+Modify section 25.7.5.3 Non-member functions [[time.clock.file.nonmembers]](
+http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.7.5.3):
 
 > ::: rm
 > \pnum{1} *Effects:* Calls `to_stream(os, fmt, t)`, where `fmt` is a string
 > containing `"%F %T"` widened to `charT`.
 > :::
 > ::: add
-> *Effects:* Equivalent to `os << format(fmt, t)`, where `fmt` is a string
-> containing `"{:%F %T}"` widened to `charT`.
+> \pnum{1} *Effects:* Equivalent to `os << format(fmt, t)`, where `fmt` is a
+> string containing `"{:%F %T}"` widened to `charT`.
 > :::
 
-```diff
-- template<class charT, class traits, class Duration>
--   basic_ostream<charT, traits>&
--     to_stream(basic_ostream<charT, traits>& os, const charT* fmt, const file_time<Duration>& tp);
-+ template<class Duration, class charT>
-+   struct formatter<file_time<Duration>, charT>;
-```
-
-> \pnum{3} [*Effects:* Streams `tp` into `os` using the format specified by the
-> NTCTS `fmt`. `fmt` encoding follows the rules specified in 25.11.]{.rm}
-> [The specialization is enabled and the format string encoding follows the rules
-> specified in 25.11.]{.add}
+> ::: rm
+> ```
+> template<class charT, class traits, class Duration>
+>   basic_ostream<charT, traits>&
+>     to_stream(basic_ostream<charT, traits>& os, const charT* fmt, const file_time<Duration>& tp);
+> ```
+>
+> \pnum{3} *Effects:* Streams `tp` into `os` using the format specified by the
+> NTCTS `fmt`. `fmt` encoding follows the rules specified in 25.11.
 > If `%Z` is used, it will be replaced with `"UTC"` widened to `charT`. If `%z`
 > is used > (or a modified variant of `%z` ), an offset of `0min` will be
 > formatted. The > date and time formatted shall be equivalent to that formatted
 > by a `sys_time` initialized with `clock_cast<system_clock>(tp)`, or by a
 > `utc_time` initialized with `clock_cast<utc_clock>(tp)`.
-
-> ::: rm
+>
 > \pnum{4} *Returns:* `os`.
 > :::
 
 Modify section 25.7.8 Local time [[time.clock.local]](
 http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsection.25.7.8):
 
-```diff
-- template<class charT, class traits, class Duration>
--   basic_ostream<charT, traits>&
--     to_stream(basic_ostream<charT, traits>& os, const charT* fmt, const local_time<Duration>& tp,
--               const string* abbrev = nullptr, const seconds* offset_sec = nullptr);
-+ template<class Duration, class charT>
-+   struct formatter<local_time<Duration>, charT>;
-```
 > ::: rm
+> ```
+> template<class charT, class traits, class Duration>
+>   basic_ostream<charT, traits>&
+>     to_stream(basic_ostream<charT, traits>& os, const charT* fmt, const local_time<Duration>& tp,
+>               const string* abbrev = nullptr, const seconds* offset_sec = nullptr);
+> ```
+>
 > \pnum{4} *Effects:* Streams `tp` into `os` using the format specified by the
 > NTCTS `fmt`. `fmt` encoding follows the rules specified in 25.11.
 > If `%Z` is used, it will be replaced with `*abbrev` if `abbrev` is not equal
@@ -681,439 +574,261 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsection.25.
 > `*offset_sec` if `offset_sec` is not equal to `nullptr`. If `%z` (or a
 > modified variant of `%z`) is used, and `offset_sec` is equal to `nullptr`,
 > then `os.setstate(ios_base::failbit)` shall be called.
-> :::
-> ::: add
-> The specialization is enabled and the format string encoding
-> follows the rules specified in 25.11. If `%Z`, `%z`, or a modified version of
-> `%z` is used, `format_error` shall be thrown.
-> :::
-
-> ::: rm
+>
 > \pnum{4} *Returns:* `os`.
 > :::
 
-```diff
-+ template<class Duration> struct local_time_format_t { // exposition-only
-+   local_time<Duration> time;
-+   const string* abbrev;
-+   const seconds* offset_sec;
-+ };
-+
-+ template<class Duration>
-+   local_time_format_t<Duration>
-+     local_time_format(local_time<Duration> time, const string* abbrev = nullptr,
-+                       const seconds* offset_sec = nullptr);
-```
-
-> ::: add
-> *Returns:* `{time, abbrev, offset_sec}`.
-> :::
-
-```diff
-+ template<class Duration, class charT>
-+   struct formatter<local_time_format_t<Duration>, charT>;
-```
-
-> ::: add
-> The specialization is enabled and the format string encoding
-> follows the rules specified in 25.11. Let `f` be a
-> `local_time_format_t<Duration>` object passed to `formatter::format`. If `%Z`
-> is used, it will be replaced with `*f.abbrev` if `f.abbrev` is not equal
-> to `nullptr`. If `f.abbrev` is equal to `nullptr` (and `%Z` is used),
-> `format_error` shall be thrown. If `%z` is used (or a
-> modified variant of `%z`), it will be formatted with the value of
-> `*f.offset_sec` if `f.offset_sec` is not equal to `nullptr`. If `%z` (or a
-> modified variant of `%z`) is used, and `f.offset_sec` is equal to `nullptr`,
-> then `format_error` shall be thrown.
-> :::
-
-Rename section 25.8.3.3 Non-member functions [[time.cal.day.nonmembers]](
-http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.8.3.3)
-to 25.8.3.3 Nonmembers [time.cal.day.nonmembers] and modify it:
+Modify section 25.8.3.3 Non-member functions [[time.cal.day.nonmembers]](
+http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.8.3.3):
 
 > \pnum{7} *Effects:* Inserts `format(fmt, d)` where `fmt` is
 > [`"%d"`]{.rm}[`"{:%d}"`]{.add} widened to `charT`. If `!d.ok()`, appends with
 >`" is not a valid day"`.
 
-```diff
-- template<class charT, class traits>
--   basic_ostream<charT, traits>&
--     to_stream(basic_ostream<charT, traits>& os, const charT* fmt, const day& d);
-+ template<class charT>
-+   struct formatter<day, charT>;
-```
-
 > ::: rm
+> ```
+> template<class charT, class traits>
+>   basic_ostream<charT, traits>&
+>     to_stream(basic_ostream<charT, traits>& os, const charT* fmt, const day& d);
+> ```
+>
 > \pnum{9} *Effects:* Streams `d` into `os` using the format specified by the
 > NTCTS `fmt`. `fmt` encoding follows the rules specified in 25.11.
-> :::
-> ::: add
-> The specialization is enabled and the format string encoding follows the rules
-> specified in 25.11.
-> :::
-
-> ::: rm
+>
 > \pnum{10} *Returns:* `os`.
 > :::
 
-Rename section 25.8.4.3 Non-member functions [[time.cal.month.nonmembers]](
-http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.8.4.3)
-to 25.8.4.3 Nonmembers [time.cal.month.nonmembers] and modify it:
+Modify section 25.8.4.3 Non-member functions [[time.cal.month.nonmembers]](
+http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.8.4.3):
 
 > \pnum{7} *Effects:* If `m.ok() == true` inserts `format(os.getloc(), fmt, m)`
 > where `fmt` is [`"%b"`]{.rm}[`"{:%b}"`]{.add} widened to `charT`. Otherwise
 > inserts `unsigned{m} << is not a valid month"`.
 
-```diff
-- template<class charT, class traits>
--   basic_ostream<charT, traits>&
--     to_stream(basic_ostream<charT, traits>& os, const charT* fmt, const month& m);
-+ template<class charT>
-+   struct formatter<month, charT>;
-```
-
 > ::: rm
+> ```
+> template<class charT, class traits>
+>   basic_ostream<charT, traits>&
+>     to_stream(basic_ostream<charT, traits>& os, const charT* fmt, const month& m);
+> ```
+>
 > \pnum{9} *Effects:* Streams `m` into `os` using the format specified by the
 > NTCTS `fmt`. `fmt` encoding follows the rules specified in 25.11.
-> :::
-> ::: add
-> The specialization is enabled and the format string encoding follows the rules
-> specified in 25.11.
-> :::
-
-> ::: rm
+>
 > \pnum{10} *Returns:* `os`.
 > :::
 
-Rename section 25.8.5.3 Non-member functions [[time.cal.year.nonmembers]](
-http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.8.5.3)
-to 25.8.5.3 Nonmembers [time.cal.year.nonmembers] and modify it:
+Modify section 25.8.5.3 Non-member functions [[time.cal.year.nonmembers]](
+http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.8.5.3):
 
 > \pnum{7} *Effects:* Inserts `format(fmt, y)` where `fmt` is
 > [`"%Y"`]{.rm}[`"{%Y:}"`]{.add} widened to `charT`. If `!y.ok()`, appends with
-> " is not a valid year".
-
-```diff
-- template<class charT, class traits>
--   basic_ostream<charT, traits>&
--     to_stream(basic_ostream<charT, traits>& os, const charT* fmt, const year& y);
-+ template<class charT>
-+   struct formatter<year, charT>;
-```
+> `" is not a valid year"`.
 
 > ::: rm
+> ```
+> template<class charT, class traits>
+>   basic_ostream<charT, traits>&
+>     to_stream(basic_ostream<charT, traits>& os, const charT* fmt, const year& y):
+> ```
+>
 > \pnum{9} *Effects:* Streams `y` into `os` using the format specified by the
 > NTCTS `fmt`. `fmt` encoding follows the rules specified in 25.11.
-> :::
-> ::: add
-> The specialization is enabled and the format string encoding follows the rules
-> specified in 25.11.
-> :::
-
-> ::: rm
+>
 > \pnum{10} *Returns:* `os`.
 > :::
 
-Rename section 25.8.6.3 Non-member functions [[time.cal.wd.nonmembers]](
-http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.8.6.3)i
-to 25.8.6.3 Nonmembers [time.cal.wd.nonmembers] and modify it:
+Modify section 25.8.6.3 Non-member functions [[time.cal.wd.nonmembers]](
+http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.8.6.3):
 
 > \pnum{6} *Effects:* If `wd.ok() == true` inserts `format(os.getloc(), fmt, m)`
 > where `fmt` is [`"%a"`]{.rm}[`"{:%a}"`]{.add} widened to `charT`. Otherwise
 > inserts `unsigned{m} << is not a valid weekday"`.
 
-```diff
-- template<class charT, class traits>
--   basic_ostream<charT, traits>&
--     to_stream(basic_ostream<charT, traits>& os, const charT* fmt, const weekday& wd);
-+ template<class charT>
-+   struct formatter<weekday, charT>;
-```
-
 > ::: rm
+> ```
+> template<class charT, class traits>
+>   basic_ostream<charT, traits>&
+>     to_stream(basic_ostream<charT, traits>& os, const charT* fmt, const weekday& wd);
+> ```
+>
 > \pnum{8} *Effects:* Streams `wd` into `os` using the format specified by the
 > NTCTS `fmt`. `fmt` encoding follows the rules specified in 25.11.
-> :::
-> ::: add
-> The specialization is enabled and the format string encoding follows the rules
-> specified in 25.11.
-> :::
-
-> ::: rm
+>
 > \pnum{9} *Returns:* `os`.
 > :::
 
-Rename section 25.8.7.3 Non-member functions [[time.cal.wdidx.nonmembers]](
-http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.8.7.3)i
-to 25.8.7.3 Nonmembers [time.cal.wdidx.nonmembers] and modify it:
-
-```diff
-+ template<class charT>
-+   struct formatter<weekday_indexed, charT>;
-```
-
-> ::: add
-> The specialization is enabled and the format string encoding follows the rules
-> specified in 25.11.
-> :::
-
-Rename section 25.8.8.3 Non-member functions [[time.cal.wdlast.nonmembers]](
-http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.8.8.3)i
-to 25.8.8.3 Nonmembers [time.cal.wdlast.nonmembers] and modify it:
-
-```diff
-+ template<class charT>
-+   struct formatter<weekday_last, charT>;
-```
-
-> ::: add
-> The specialization is enabled and the format string encoding follows the rules
-> specified in 25.11.
-> :::
-
-Rename section 25.8.9.3 Non-member functions [[time.cal.md.nonmembers]](
-http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.8.9.3)i
-to 25.8.9.3 Nonmembers [time.cal.md.nonmembers] and modify it:
-
-```diff
-- template<class charT, class traits>
--   basic_ostream<charT, traits>&
--     to_stream(basic_ostream<charT, traits>& os, const charT* fmt, const month_day& md);
-+ template<class charT>
-+   struct formatter<month_day, charT>;
-```
+Modify section 25.8.7.3 Non-member functions [[time.cal.wdidx.nonmembers]](
+http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.8.7.3):
 
 > ::: rm
+> \pnum{2} *Effects:* `os << wdi.weekday() << ’[’ << wdi.index()`. If
+> `wdi.index()` is in the range `[1, 5]`, appends with `’]’`, otherwise appends
+> with `" is not a valid index]"`.
+> :::
+> ::: add
+> \pnum{2} *Effects:* Equivalent to
+> ```
+> os << format(os.getloc(), "{}[{}{}]", wdi.weekday(), i,
+>              i >= 1 && i <= 5 ? "" : " is not a valid index");
+> ```
+> where `i` is `wdi.index()`.
+> :::
+
+Modify section 25.8.8.3 Non-member functions [[time.cal.wdlast.nonmembers]](
+http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.8.8.3):
+
+> ::: rm
+> \pnum{2} *Returns:* `os << wdl.weekday() << "[last]"`.
+> :::
+> ::: add
+> \pnum{2} *Returns:* `os << format(os.getloc(), "{}[last]", wdl.weekday())`.
+> :::
+
+Modify section 25.8.9.3 Non-member functions [[time.cal.md.nonmembers]](
+http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.8.9.3):
+
+> ::: rm
+> \pnum{3} *Returns:* `os << md.month() << ’/’ << md.day()`.
+> :::
+> ::: add
+> \pnum{3} *Returns:* `os << format(os.getloc(), "{}/{}", md.month(), md.day())`.
+> :::
+
+> ::: rm
+> ```
+> template<class charT, class traits>
+>   basic_ostream<charT, traits>&
+>     to_stream(basic_ostream<charT, traits>& os, const charT* fmt, const month_day& md);
+> ```
+>
 > \pnum{8} *Effects:* Streams `md` into `os` using the format specified by the
 > NTCTS `fmt`. `fmt` encoding follows the rules specified in 25.11.
-> :::
-> ::: add
-> The specialization is enabled and the format string encoding follows the rules
-> specified in 25.11.
-> :::
-
-> ::: rm
+>
 > \pnum{9} *Returns:* `os`.
 > :::
 
 Modify section 25.8.10 Class `month_day_last` [[time.cal.mdlast]](
 http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsection.25.8.10):
 
-```diff
-+ template<class charT>
-+   struct formatter<month_day_last, charT>;
-```
-
+> ::: rm
+> \pnum{9} *Returns:* `os << mdl.month() << "/last"`.
+> :::
 > ::: add
-> The specialization is enabled and the format string encoding follows the rules
-> specified in 25.11.
+> \pnum{9} *Returns:* `os << format(os.getloc(), "{}/last", md.month())`.
 > :::
 
-Rename section 25.8.11.3 Non-member functions [[time.cal.mwd.nonmembers]](
-http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.8.11.3)
-to 25.8.11.3 Nonmembers [time.cal.mwd.nonmembers] and modify it:
-
-```diff
-+ template<class charT>
-+   struct formatter<month_weekday, charT>;
-```
-
-> ::: add
-> The specialization is enabled and the format string encoding follows the rules
-> specified in 25.11.
-> :::
-
-Rename section 25.8.12.3 Non-member functions [[time.cal.mwdlast.nonmembers]](
-http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.8.12.3)
-to 25.8.12.3 Nonmembers [time.cal.mwdlast.nonmembers] and modify it:
-
-```diff
-+ template<class charT>
-+   struct formatter<month_weekday_last, charT>;
-```
-
-> ::: add
-> The specialization is enabled and the format string encoding follows the rules
-> specified in 25.11.
-> :::
-
-Rename section 25.8.13.3 Non-member functions [[time.cal.ym.nonmembers]](
-http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.8.13.3)
-to 25.8.13.3 Nonmembers [time.cal.ym.nonmembers] and modify it:
-
-```diff
-- template<class charT, class traits>
--   basic_ostream<charT, traits>&
--     to_stream(basic_ostream<charT, traits>& os, const charT* fmt, const year_month& ym);
-+ template<class charT>
-+   struct formatter<year_month, charT>;
-```
+Modify section 25.8.11.3 Non-member functions [[time.cal.mwd.nonmembers]](
+http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.8.11.3):
 
 > ::: rm
+> \pnum{2} *Returns:* `os << mwd.month() << ’/’ << mwd.weekday_indexed()`.
+> :::
+> ::: add
+> \pnum{2} *Returns:* `os << format(os.getloc(), "{}/{}", mwd.month(), mwd.weekday_indexed())`.
+> :::
+
+Modify section 25.8.12.3 Non-member functions [[time.cal.mwdlast.nonmembers]](
+http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.8.12.3):
+
+> ::: rm
+> \pnum{2} *Returns:* `os << mwdl.month() << ’/’ << mwdl.weekday_last()`.
+> :::
+> ::: add
+> \pnum{2} *Returns:* `os << format(os.getloc(), "{}/{}", mwdl.month(), mwdl.weekday_last())`.
+> :::
+
+Modify section 25.8.13.3 Non-member functions [[time.cal.ym.nonmembers]](
+http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.8.13.3):
+
+> ::: rm
+> \pnum{10} *Returns:* `os << ym.year() << ’/’ << ym.month()`.
+> :::
+> ::: add
+> \pnum{10} *Returns:* `os << format(os.getloc(), "{}/{}", ym.year(), ym.month())`.
+> :::
+
+> ::: rm
+> ```
+> template<class charT, class traits>
+>   basic_ostream<charT, traits>&
+>     to_stream(basic_ostream<charT, traits>& os, const charT* fmt, const year_month& ym);
+> ```
+>
 > \pnum{11} *Effects:* Streams `ym` into `os` using the format specified by the
 > NTCTS `fmt`. `fmt` encoding follows the rules specified in 25.11.
-> :::
-> ::: add
-> The specialization is enabled and the format string encoding follows the rules
-> specified in 25.11.
-> :::
-
-> ::: rm
+>
 > \pnum{12} *Returns:* `os`.
 > :::
 
-Rename section 25.8.14.3 Non-member functions [[time.cal.ymd.nonmembers]](
-http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.8.14.3)
-to 25.8.14.3 Nonmembers [time.cal.ymd.nonmembers] and modify it:
+Modify section 25.8.14.3 Non-member functions [[time.cal.ymd.nonmembers]](
+http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.8.14.3):
 
 > \pnum{11} *Effects:* Inserts `format(fmt, ymd)` where `fmt` is
 > [`"%F"`]{.rm}[`"{:%F}"`]{.add} widened to `charT`. If `!ymd.ok()`, appends
 > with `" is not a valid date"`.
 
-```diff
-- template<class charT, class traits>
--   basic_ostream<charT, traits>&
--     to_stream(basic_ostream<charT, traits>& os, const charT* fmt, const year_month_day& ymd);
-+ template<class charT>
-+   struct formatter<year_month_day, charT>;
-```
-
 > ::: rm
+> ```
+> template<class charT, class traits>
+>   basic_ostream<charT, traits>&
+>     to_stream(basic_ostream<charT, traits>& os, const charT* fmt, const year_month_day& ymd);
+> ```
+>
 > \pnum{13} *Effects:* Streams `ym` into `os` using the format specified by the
 > NTCTS `fmt`. `fmt` encoding follows the rules specified in 25.11.
-> :::
-> ::: add
-> The specialization is enabled and the format string encoding follows the rules
-> specified in 25.11.
-> :::
-
-> ::: rm
+>
 > \pnum{14} *Returns:* `os`.
 > :::
 
-Rename section 25.8.15.3 Non-member functions [[time.cal.ymdlast.nonmembers]](
-http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.8.15.3)
-to 25.8.15.3 Nonmembers [time.cal.ymdlast.nonmembers] and modify it:
-
-```diff
-+ template<class charT>
-+   struct formatter<year_month_day_last, charT>;
-```
-
-> ::: add
-> The specialization is enabled and the format string encoding follows the rules
-> specified in 25.11.
-> :::
-
-Rename section 25.8.16.3 Non-member functions [[time.cal.ymwd.nonmembers]](
-http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.8.16.3)
-to 25.8.16.3 Nonmembers [time.cal.ymwd.nonmembers] and modify it:
-
-```diff
-+ template<class charT>
-+   struct formatter<year_month_weekday, charT>;
-```
-
-> ::: add
-> The specialization is enabled and the format string encoding follows the rules
-> specified in 25.11.
-> :::
-
-Rename section 25.8.17.3 Non-member functions [[time.cal.ymwdlast.nonmembers]](
-http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.8.17.3)
-to 25.8.17.3 Nonmembers [time.cal.ymwdlast.nonmembers] and modify it:
-
-```diff
-+ template<class charT>
-+   struct formatter<year_month_weekday_last, charT>;
-```
-
-> ::: add
-> The specialization is enabled and the format string encoding follows the rules
-> specified in 25.11.
-> :::
-
-Modify section 25.9.6 Formatted output [[time.tod.io]](
-http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsection.25.9.6):
-
-```diff
-+ template<class Rep, class Period, class charT>
-+   struct formatter<time_of_day<duration<Rep, Period>>, charT>;
-```
-
-> ::: add
-> The specialization is enabled and the format string encoding follows the rules
-> specified in 25.11.
-> :::
-
-Modify section 25.10.4.1 Class `sys_info` [[time.zone.info.sys]](
-http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.10.4.1):
-
-```diff
-+ templateclass charT>
-+   struct formatter<sys_info, charT>;
-```
-
-> ::: add
-> The specialization is enabled and the format string encoding follows the rules
-> specified in 25.11.
-> :::
-
-Modify section 25.10.4.1 Class `local_info` [[time.zone.info.local]](
-http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.10.4.2):
-
-```diff
-+ templateclass charT>
-+   struct formatter<local_info, charT>;
-```
-
-> ::: add
-> The specialization is enabled and the format string encoding follows the rules
-> specified in 25.11.
-> :::
-
-Rename section 25.10.7.4 Non-member functions
-[[time.zone.zonedtime.nonmembers]](
-http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.10.7.4)
-to 25.10.7.4 Nonmembers [time.zone.zonedtime.nonmembers] and modify it:
-
-```diff
-- template<class charT, class traits, class Duration, class TimeZonePtr>
--   basic_ostream<charT, traits>&
--     to_stream(basic_ostream<charT, traits>& os, const charT* fmt,
--               const zoned_time<Duration, TimeZonePtr>& tp);
-+ template<class Duration, class TimeZonePtr, class charT>
-+   struct formatter<zoned_time<Duration, TimeZonePtr>, charT>
-+     : formatter<local_time_format_t<Duration>, charT> {
-+   template <typename FormatContext>
-+     auto format(const zoned_time<Duration, TimeZonePtr>& tp, FormatContext& ctx);
-+ };
-```
+Modify section 25.8.15.3 Non-member functions [[time.cal.ymdlast.nonmembers]](
+http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.8.15.3):
 
 > ::: rm
+> \pnum{9} *Returns:* `os << ymdl.year() << ’/’ << ymdl.month_day_last()`.
+> :::
+> ::: add
+> \pnum{9} *Returns:* `os << format(os.getloc(), "{}/{}", ymdl.year(), ymdl.month_day_last())`.
+> :::
+
+Modify section 25.8.16.3 Non-member functions [[time.cal.ymwd.nonmembers]](
+http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.8.16.3):
+
+> ::: rm
+> \pnum{8} *Returns:* `os << ymwdi.year() << ’/’ << ymwdi.month() << ’/’ << ymwdi.weekday_indexed()`.
+> :::
+> ::: add
+> \pnum{8} *Returns:* `os << format(os.getloc(), "{}/{}/{}", ymwdi.year(), ymwdi.month(), ymwdi.weekday_indexed())`.
+> :::
+
+Modify section 25.8.17.3 Non-member functions [[time.cal.ymwdlast.nonmembers]](
+http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.8.17.3):
+
+> ::: rm
+> \pnum{8} *Returns:* `os << ymwdl.year() << ’/’ << ymwdl.month() << ’/’ << ymwdl.weekday_last(`.
+> :::
+> ::: add
+> \pnum{8} *Returns:* `os << format(os.getloc(), "{}/{}/{}", ymwdl.year(), ymwdl.month(), ymwdl.weekday_last())`.
+> :::
+
+Modify section 25.10.7.4 Non-member functions
+[[time.zone.zonedtime.nonmembers]](
+http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.10.7.4):
+
+> ::: rm
+> ```
+> template<class charT, class traits, class Duration, class TimeZonePtr>
+>   basic_ostream<charT, traits>&
+>     to_stream(basic_ostream<charT, traits>& os, const charT* fmt,
+>               const zoned_time<Duration, TimeZonePtr>& tp);
+> ```
+>
 > \pnum{5} *Effects:* First obtains a `sys_info` via `tp.get_info()` which for
 > exposition purposes will be referred to as `info`. Then calls
 > `to_stream(os, fmt, tp.get_local_time(), &info.abbrev, &info.offset)`.
-> :::
-
-```diff
-+ template <typename FormatContext>
-+   auto format(const zoned_time<Duration, TimeZonePtr>& tp, FormatContext& ctx);
-```
-
-> ::: add
-> *Effects:* First obtains a `sys_info` via `tp.get_info()` which for exposition
-> purposes will be referred to as `info`. Then returns
-> `formatter<local_time_format_t<Duration>, charT>::format(
-> {tp.get_local_time(), &info.abbrev, &info.offset}, ctx)`.
-> :::
-
-> ::: rm
+>
 > \pnum{6} *Returns:* `os`.
 > :::
-
-TODO: replace all `to_stream` overloads with `formatter` specializations and
-      rephrase references to `to_stream` in terms of `format`.
 
 Modify section 25.11 Formatting [[time.format]](
 http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#section.25.11):
@@ -1244,7 +959,125 @@ TODO      remaining conversion specifiers
 > _--- end example_]
 > :::
 
-TODO: global or C locale?
+> ::: add
+> ```
+> template<class Duration, class charT>
+>   struct formatter<chrono::sys_time<Duration>, charT>;
+> ```
+>
+> If `%Z` is used, it will be replaced with `"UTC"` widened to `charT`. If `%z`
+> is used (or a modified variant of `%z`), an offset of `0min` will be
+> formatted.
+>
+> ```
+> template<class Duration, class charT>
+>   struct formatter<chrono::utc_time<Duration>, charT>;
+> ```
+>
+> If `%Z` is used, it will be replaced with `"UTC"` widened to `charT`. If `%z`
+> is used (or a modified variant of `%z`), an offset of `0min` will be
+> formatted. If `tp` represents a time during a leap second insertion, and if a
+> seconds field is formatted, the integral portion of that format shall be `"60"`
+> widened to `charT`.
+>
+> ```
+> template<class Duration, class charT>
+>   struct formatter<chrono::tai_time<Duration>, charT>;
+> ```
+>
+> If `%Z` is used, it will be replaced with `"TAI"`. If `%z` is used (or a
+> modified variant of `%z`), an offset of `0min` will be formatted. The date
+> and time formatted shall be equivalent to that formatted by a `sys_time`
+> initialized with:
+> ```
+> sys_time<Duration>{tp.time_since_epoch()} -
+>   (sys_days{1970y/January/1} - sys_days{1958y/January/1})
+> ```
+>
+> ```
+> template<class Duration, class charT>
+>   struct formatter<chrono::gps_time<Duration>, charT>;
+> ```
+>
+> If `%Z` is used, it will be replaced with `"GPS"`. If `%z` is used (or a
+> modified variant of `%z`), an offset of `0min` will be formatted. The date
+> and time formatted shall be equivalent to that formatted by a `sys_time`
+> initialized with:
+> ```
+> sys_time<Duration>{tp.time_since_epoch()} +
+>   (sys_days{1980y/January/Sunday[1]} - sys_days{1970y/January/1})
+> ```
+>
+> ```
+> template<class Duration, class charT>
+>   struct formatter<chrono::file_time<Duration>, charT>;
+> ```
+>
+> If `%Z` is used, it will be replaced with `"UTC"` widened to `charT`. If `%z`
+> is used > (or a modified variant of `%z` ), an offset of `0min` will be
+> formatted. The > date and time formatted shall be equivalent to that formatted
+> by a `sys_time` initialized with `clock_cast<system_clock>(tp)`, or by a
+> `utc_time` initialized with `clock_cast<utc_clock>(tp)`.
+>
+> ```
+> template<class Duration, class charT>
+>   struct formatter<chrono::local_time<Duration>, charT>;
+> ```
+>
+> If `%Z`, `%z`, or a modified version of `%z` is used, `format_error` shall be
+> thrown.
+>
+> ```
+> template<class Duration> struct local_time_format_t { // exposition-only
+>   local_time<Duration> time;
+>   const string* abbrev;
+>   const seconds* offset_sec;
+> };
+>
+> template<class Duration>
+>   local_time_format_t<Duration>
+>     local_time_format(local_time<Duration> time, const string* abbrev = nullptr,
+>                       const seconds* offset_sec = nullptr);
+> ```
+>
+> *Returns:* `{time, abbrev, offset_sec}`.
+>
+> ```
+> template<class Duration, class charT>
+>   struct formatter<chrono::local_time_format_t<Duration>, charT>;
+> ```
+>
+> Let `f` be a
+> `local_time_format_t<Duration>` object passed to `formatter::format`. If `%Z`
+> is used, it will be replaced with `*f.abbrev` if `f.abbrev` is not equal
+> to `nullptr`. If `f.abbrev` is equal to `nullptr` (and `%Z` is used),
+> `format_error` shall be thrown. If `%z` is used (or a
+> modified variant of `%z`), it will be formatted with the value of
+> `*f.offset_sec` if `f.offset_sec` is not equal to `nullptr`. If `%z` (or a
+> modified variant of `%z`) is used, and `f.offset_sec` is equal to `nullptr`,
+> then `format_error` shall be thrown.
+>
+> ```
+> template<class Duration, class TimeZonePtr, class charT>
+>   struct formatter<chrono::zoned_time<Duration, TimeZonePtr>, charT>
+>     : formatter<chrono::local_time_format_t<Duration>, charT> {
+>   template <typename FormatContext>
+>     typename FormatContext::iterator
+>       format(const chrono::zoned_time<Duration, TimeZonePtr>& tp, FormatContext& ctx);
+> };
+> ```
+>
+> ```
+> template <typename FormatContext>
+>   typename FormatContext::iterator
+>     format(const chrono::zoned_time<Duration, TimeZonePtr>& tp, FormatContext& ctx);
+> ```
+>
+> *Effects:* First obtains a `sys_info` via `tp.get_info()` which for exposition
+> purposes will be referred to as `info`. Then returns
+> `formatter<chrono::local_time_format_t<Duration>, charT>::format(
+> {tp.get_local_time(), &info.abbrev, &info.offset}, ctx)`.
+> :::
 
 ## Changes to P0645 Text Formatting
 
