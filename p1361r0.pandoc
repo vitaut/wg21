@@ -131,6 +131,11 @@ HH There's also a std::chrono::parse which this doesn't have. For symmetry
 purposes I think we need to alias this to std::chrono as well, but I have not
 tried that. Do we care about the lack of symmetry?
 
+# Implementation
+
+Formatting of chrono durations and locale support have been implemented in the
+[{fmt} library](https://github.com/fmtlib/fmt).
+
 # Proposed Wording
 
 This wording is based on the working draft [@N4727] unless stated otherwise.
@@ -941,7 +946,24 @@ Specifier Replacement
           valid month, [`setstate(ios::failbit)` is called]{.rm}
           [`format_error` is thrown]{.add}.
 
-TODO      remaining conversion specifiers
+`%B`      The locale’s full month name. If the value does not contain a valid
+          month, [`setstate(ios::failbit)` is called]{.rm}
+          [`format_error` is thrown]{.add}.
+
+...       ...
+
+`%z`      The offset from UTC in the ISO 8601 format. For example `-0430` refers
+          to 4 hours 30 minutes behind UTC. If the offset is zero, `+0000` is
+          used. The modified commands `%Ez` and `%Oz` insert a `:` between the
+          hours and minutes: `-04:30`. If the offset information is not
+          available, [`setstate(ios_base::failbit)` shall be called]{.rm}
+          [`format_error` shall be thrown]{.add}.
+
+`%Z`      The time zone abbreviation. If the time zone abbreviation is not
+          available, [`setstate(ios_base::failbit)` shall be called]{.rm}
+          [`format_error` shall be thrown]{.add}.
+
+`%%`      A `%` character.
 --------------------------------------------------------------------------------
 
 > ::: add
