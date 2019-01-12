@@ -127,7 +127,7 @@ auto zt = std::chrono::zoned_time(...);
 std::cout << std::format(std::locale{"fi_FI"}, "Localized time is {:%c}\n", zt);
 ```
 
-# Proposed changes
+# Proposed Changes
 
 We propose the following changes to [@N4727] and [@P0645]:
 
