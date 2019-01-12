@@ -172,7 +172,7 @@ We propose the following changes to [@N4727] and [@P0645]:
    ```
    std::cout << std::left << std::setw(8) << Sunday[2] << "game\n";
    ```
-   will print "Sun[2]  game" instead of "Sun     [2]game".
+   will print `"Sun[2]  game"` instead of `"Sun     [2]game"`.
 
 6. Add [@P0645] formatting function overloads that take a locale and make the
    locale available to custom formatters via format context, e.g.
@@ -182,10 +182,22 @@ We propose the following changes to [@N4727] and [@P0645]:
 
 # Open Questions
 
-> Howard Hinnant:
-> There's also a `std::chrono::parse` which this doesn't have. For symmetry
-> purposes I think we need to alias this to `std::chrono` as well, but I have
-> not tried that. Do we care about the lack of symmetry?
+It is not clear what to do with `std::chrono::parse` for which [@P0645] doesn't
+have an alternative. Possible options:
+
+1. Don't do anything: `std::chrono::parse` will not have a formatting
+   counterpart in `std::chrono`.
+
+2. Make `std::chrono::format` an alias of `std::format` to preserve symmetry.
+
+3. Replace `std::chrono::parse` with a more general parsing facility
+   (`std::parse`?) that can handle not just `chrono` types. There is no paper
+   that proposes such facility at the moment.
+
+While having some sort of symmetry in the API is appealing there are precedents
+in other popular programming languages where formatting and parsing API are not
+symmetric. For example, `str.format` in Python ([@PYSTR]), [@P0645] is
+based on, doesn't have a corresponding parsing API in the standard library.
 
 # Implementation
 
@@ -1367,4 +1379,8 @@ references:
     issued:
       year: 2018
     URL: http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p0645r3.html
+  - id: PYSTR
+    citation-label: PYSTR
+    title: String Methods, The Python Standard Library
+    URL: https://docs.python.org/3/library/stdtypes.html#str.format
 ---
