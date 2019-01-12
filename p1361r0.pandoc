@@ -2,7 +2,9 @@
 title: Integration of chrono with text formatting
 document: P1361R0
 date: 2018-10-16
-audience: Library Evolution Working Group, Library Working Group
+audience:
+  - Library Evolution Working Group
+  - Library Working Group
 author:
   - name: Victor Zverovich
     email: <victor.zverovich@gmail.com>
@@ -80,13 +82,13 @@ Integrating the two proposals provides the following advantages:
 
    **Before**
    ```cpp
-   std::cout << std::setw(20) << std::right
+   std::cout << std::setw(15) << std::right
              << std::chrono::format("%Y-%m-%d", birthday) << "\n";
    ```
 
    **After**
    ```cpp
-   std::cout << std::format("{0:>20%Y-%m-%d}\n", birthday);
+   std::cout << std::format("{0:>15%Y-%m-%d}\n", birthday);
    ```
 
 5. Improve control over formatting:
@@ -125,11 +127,65 @@ auto zt = std::chrono::zoned_time(...);
 std::cout << std::format(std::locale{"fi_FI"}, "Localized time is {:%c}\n", zt);
 ```
 
+# Proposed changes
+
+We propose the following changes to [@N4727] and [@P0645]:
+
+1. Replace `std::chrono::to_stream` overloads with `std::formatter`
+   specializations to make chrono types formattable with functions from
+   [@P0645], e.g.
+
+   ```diff
+   namespace chrono {
+   - template<class charT, class traits, class Rep, class Period>
+   -   basic_ostream<charT, traits>&
+   -     to_stream(basic_ostream<charT, traits>& os, const charT* fmt,
+   -               const duration<Rep, Period>& d);
+   }
+   + template<class Rep, class Period, class charT>
+   +   struct formatter<chrono::duration<Rep, Period>, charT>;
+   ```
+
+2. Remove `std::chrono::format` in favor of `std::format`, `std::format_to`, and
+   other formatting functions provided by [@P0645].
+
+3. Extend format specifications to allow width, fill, and alignment for
+   consistency with specifications for other types:
+   ```
+   format-spec     ::= [[fill] align] [width] [conversion-spec [chrono-specs]]
+   ```
+   Example:
+   ```
+   string s = format("{0:>15%Y-%m-%d}", birthday);
+   // s == "     1950-12-30"
+   ```
+
+4. Specify that the default format `"{}"` produces the same output as
+   `operator<<`, e.g.
+   ```
+   string s = format("{}", 10ms);
+   // s == "10ms"
+   ```
+
+5. Restate `operator<<` definitions in terms of `std::format` to make I/O
+   manipulators apply to whole objects rather than their parts. For example
+   ```
+   std::cout << std::left << std::setw(8) << Sunday[2] << "game\n";
+   ```
+   will print "Sun[2]  game" instead of "Sun     [2]game".
+
+6. Add [@P0645] formatting function overloads that take a locale and make the
+   locale available to custom formatters via format context, e.g.
+   ```
+   string s = std::format(std::locale{"fi_FI"}, "{:%c}", zt);
+   ```
+
 # Open Questions
 
-HH There's also a std::chrono::parse which this doesn't have. For symmetry
-purposes I think we need to alias this to std::chrono as well, but I have not
-tried that. Do we care about the lack of symmetry?
+> Howard Hinnant:
+> There's also a `std::chrono::parse` which this doesn't have. For symmetry
+> purposes I think we need to alias this to `std::chrono` as well, but I have
+> not tried that. Do we care about the lack of symmetry?
 
 # Implementation
 
@@ -1186,15 +1242,77 @@ Modify section 19.20.2 Formatting functions
 >
 > ```
 > string vformat(const locale& loc, string_view fmt, format_args args);
+> wstring vformat(const locale& loc, wstring_view fmt, wformat_args args);
 > ```
 > *Returns:* A string object holding the character representation of formatting
 > arguments provided by args formatted according to specifications given in
-> `fmt` using `loc` for locale-specific formatting.
+> `fmt`. Uses `loc` for locale-specific formatting.
 >
 > *Throws:* `format_error` if `fmt` is not a valid format string.
+>
+> ```
+> template<OutputIterator<const char&> O, class... Args>
+>   O format_to(O out, const locale& loc, string_view fmt, const Args&... args);
+> ```
+> *Returns:* `vformat_to(out, loc, fmt, make_format_args<basic_format_context<O, char>>(args...))`.
+>
+> ```
+> template<OutputIterator<const wchar_t&> O, class... Args>
+>   O format_to(O out, const locale& loc, wstring_view fmt, const Args&... args);
+> ```
+> *Returns:* `vformat_to(out, loc, fmt, make_format_args<basic_format_context<O, wchar_t>>(args...))`.
+>
+> ```
+> template<OutputIterator<const char&> O>
+>   O vformat_to(O out, const locale& loc, string_view fmt,
+>                format_args_t<O, char> args);
+> template<OutputIterator<const wchar_t&> O>
+>   O vformat_to(O out, const locale& loc, wstring_view fmt,
+>                format_args_t<O, wchar_t> args);
+> ```
+> *Effects:* Places the character representation of formatting arguments
+> provided by `args` formatted according to specifications given in `fmt` into
+> the range `[out, out + N)`, where `N` is the formatted output size. Uses `loc`
+> for locale-specific formatting.
+>
+> *Returns:* `out + N`.
+>
+> *Throws:* `format_error` if `fmt` is not a valid format string.
+>
+> ```
+> template<OutputIterator<const char&> O, class... Args>
+>   format_to_n_result<O> format_to_n(O out, iter_difference_t<O> n,
+>                                     const locale& loc, string_view fmt,
+>                                     const Args&... args);
+> template<OutputIterator<const wchar_t&> O, class... Args>
+>   format_to_n_result<O> format_to_n(O out, iter_difference_t<O> n,
+>                                     const locale& loc, wstring_view fmt,
+>                                     const Args&... args);
+> ```
+> Let `N` be the formatted output size and `M` be `min(max(n, 0), N)`.
+>
+> *Effects:* Places the character representation of formatting arguments
+> provided by `args` formatted according to specifications given in `fmt` into
+> the range `[out, out + M)`. Uses `loc` for locale-specific formatting.
+>
+> *Returns:* `{out + M, N}`.
+>
+> *Throws:* `format_error` if `fmt` is not a valid format string.
+>
+> ```
+> template<class... Args>
+>   size_t formatted_size(const locale& loc, string_view fmt,
+>                         const Args&... args);
+> template<class... Args>
+>   size_t formatted_size(const locale& loc, wstring_view fmt,
+>                         const Args&... args);
+> ```
+> *Returns:* The number of characters in the character representation of
+> formatting arguments `args` formatted according to specifications given in
+> `fmt`. Uses `loc` for locale-specific formatting.
+>
+> *Throws:* format_error if `fmt` is not a valid format string.
 > :::
-
-TODO: remaining functions
 
 Modify section 19.20.3.3 Class template `basic_format_context`
 [[format.context]](http://fmtlib.net/P0645R4.html#format.context):
