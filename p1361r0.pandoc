@@ -78,8 +78,8 @@ Integrating the two proposals provides the following advantages:
    format(std::string_view("..."), date); // resolves to std::format
    ```
 
-4. Allow fill, width, and alignment in a format string using the same syntax as
-   for other types:
+4. Allow fill, width, precision, and alignment in a format string using the same
+   syntax as for other types:
 
    **Before**
    ```cpp
@@ -150,10 +150,11 @@ We propose the following changes to [@N4727] and [@P0645]:
 2. Remove `std::chrono::format` in favor of `std::format`, `std::format_to`, and
    other formatting functions provided by [@P0645].
 
-3. Extend format specifications to allow width, fill, and alignment for
+3. Extend format specifications to allow width, fill, precision and alignment for
    consistency with specifications for other types:
    ```
-   format-spec     ::= [[fill] align] [width] [conversion-spec [chrono-specs]]
+   format-spec     ::= [render-spec] [conversion-spec [chrono-specs]]
+   render-spec     ::= [[fill] align] [width] ['.' precision]
    ```
    Example:
    ```
@@ -946,7 +947,8 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#section.25.11)
 > according to the following specification:
 >
 > ```
-> format-spec     ::= [[fill] align] [width] [conversion-spec [chrono-specs]]
+> format-spec     ::= [render-spec] [conversion-spec [chrono-specs]]
+> render-spec     ::= [[fill] align] [width] ['.' precision]
 > chrono-specs    ::= chrono-spec [chrono-specs]
 > chrono-spec     ::= literal-char | conversion-spec
 > literal-char    ::= <a character other than '{' or '}'>
@@ -958,7 +960,7 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#section.25.11)
 >                     'Y' | 'z' | 'Z' | '%'
 > ```
 >
-> `fill`, `align`, and `width` are described in Section
+> `fill`, `align`, `width`, and `precision` are described in Section
 > [[format.functions]](http://fmtlib.net/P0645R4.html#format-functions).
 > All ordinary multibyte characters represented by `literal-char` are copied
 > unchanged to the output.
