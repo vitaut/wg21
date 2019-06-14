@@ -1,9 +1,8 @@
 ---
 title: Integration of chrono with text formatting
-document: P1361R0
-date: 2019-01-20
+document: P1361R1
+date: 2019-06-14
 audience:
-  - Library Evolution Working Group
   - Library Working Group
 author:
   - name: Victor Zverovich
@@ -19,6 +18,22 @@ author:
 > This will avoid two unrelated format facilities in the standard."
 >
 > -- [@P0355]
+
+# Changes since R1
+
+* Add LEWG poll results.
+* Change audience to "Library Working Group".
+
+# LEWG polls (R0):
+
+OK with `local_time_format` as specified.
+
+```
+SF 	F 	N 	A 	SA
+3 	3 	2 	0 	0
+```
+
+Forward to LWG for C++20. Unanimous consent. 
 
 # Motivation
 
