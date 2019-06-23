@@ -32,6 +32,8 @@ author:
   [`operator<<(basic_ostream<charT, traits>& os, const year_month_weekday& ymwd)`](
     #year_month_weekday-insertion) (a drive-by fix).
 * Apply the widening wording to newly introduced format strings.
+* Add a note to editor to replace `time_of_day` with `hh_mm_ss` if [@P1466] is
+  accepted.
 
 # Changes since R1
 
@@ -239,6 +241,8 @@ Formatting of chrono durations and locale support have been implemented in the
 # Proposed Wording
 
 This wording is based on the working draft [@N4820] unless stated otherwise.
+
+Note to editor: if [@P1466] is accepted replace `time_of_day` with `hh_mm_ss`.
 
 Modify section 27.2 Header `<chrono>` synopsis
 [[time.syn]](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#section.27.2):
@@ -1620,4 +1624,12 @@ references:
     citation-label: PYSTR
     title: String Methods, The Python Standard Library
     URL: https://docs.python.org/3/library/stdtypes.html#str.format
+  - id: P1466
+    citation-label: P1466
+    title: Miscellaneous minor fixes for chrono
+    author:
+      family: Hinnant
+      given: [Howard E.]
+    issued:
+      year: 2019
 ---
