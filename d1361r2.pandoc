@@ -23,6 +23,9 @@ author:
 
 * Rebase the wording onto the pre-Cologne C++ working draft N4820. 
 * Rename the section "Proposed Changes" to "Summary of Proposed Changes".
+* Close the `chrono` namespace before [`formatter` specializations](
+  #local_time_format-synopsis) and reopen it afterwards in Header `<chrono>`
+  synopsis.
 
 # Changes since R1
 
@@ -386,24 +389,23 @@ template<class charT, class traits, class Duration>
 -   basic_ostream<charT, traits>&
 -     to_stream(basic_ostream<charT, traits>& os, const charT* fmt,
 -               const zoned_time<Duration, TimeZonePtr>& tp);
-
-...
-
-  // 27.11, formatting
-- template<class charT, class Streamable>
--   basic_string<charT>
--     format(const charT* fmt, const Streamable& s);
-- template<class charT, class Streamable>
--   basic_string<charT>
--     format(const locale& loc, const charT* fmt, const Streamable& s);
-- template<class charT, class traits, class Alloc, class Streamable>
--   basic_string<charT, traits, Alloc>
--     format(const basic_string<charT, traits, Alloc>& fmt, const Streamable& s);
-- template<class charT, class traits, class Alloc, class Streamable>
--   basic_string<charT, traits, Alloc>
--     format(const locale& loc, const basic_string<charT, traits, Alloc>& fmt,
--            const Streamable& s);
-+ namespace chrono {
+```
+[...]{#local_time_format-synopsis}
+```diff
+    // 27.11, formatting
+-   template<class charT, class Streamable>
+-     basic_string<charT>
+-       format(const charT* fmt, const Streamable& s);
+-   template<class charT, class Streamable>
+-     basic_string<charT>
+-       format(const locale& loc, const charT* fmt, const Streamable& s);
+-   template<class charT, class traits, class Alloc, class Streamable>
+-     basic_string<charT, traits, Alloc>
+-       format(const basic_string<charT, traits, Alloc>& fmt, const Streamable& s);
+-   template<class charT, class traits, class Alloc, class Streamable>
+-     basic_string<charT, traits, Alloc>
+-       format(const locale& loc, const basic_string<charT, traits, Alloc>& fmt,
+-              const Streamable& s);
 +   template<class Duration> struct local_time_format_t; // exposition-only
 +
 +   template<class Duration>
@@ -449,6 +451,12 @@ template<class charT, class traits, class Duration>
 + template<class charT> struct formatter<chrono::local_info, charT>;
 + template<class Duration, class TimeZonePtr, class charT>
 +   struct formatter<chrono::zoned_time<Duration, TimeZonePtr>, charT>;
+
++ namespace chrono {
+    // 27.12, parsing
+    template<class charT, class traits, class Alloc, class Parsable>
+      unspecified
+        parse(const basic_string<charT, traits, Alloc>& format, Parsable& tp);
 ```
 
 Modify section 27.5.10 I/O [[time.duration.io]](
