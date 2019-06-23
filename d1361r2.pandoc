@@ -247,9 +247,9 @@ Modify section 27.2 Header `<chrono>` synopsis
 -   basic_ostream<charT, traits>&
 -     to_stream(basic_ostream<charT, traits>& os, const charT* fmt,
 -               const duration<Rep, Period>& d);
-
+```
 ...
-
+```diff
   template<class charT, class traits>
     basic_ostream<charT, traits>&
       operator<<(basic_ostream<charT, traits>& os, const sys_days& dp);
@@ -258,9 +258,9 @@ Modify section 27.2 Header `<chrono>` synopsis
 -   basic_ostream<charT, traits>&
 -     to_stream(basic_ostream<charT, traits>& os, const charT* fmt,
 -               const sys_time<Duration>& tp);
-
+```
 ...
-
+```diff
   template<class charT, class traits, class Duration>
     basic_ostream<charT, traits>&
       operator<<(basic_ostream<charT, traits>& os, const utc_time<Duration>& t);
@@ -268,9 +268,9 @@ Modify section 27.2 Header `<chrono>` synopsis
 -   basic_ostream<charT, traits>&
 -     to_stream(basic_ostream<charT, traits>& os, const charT* fmt,
 -               const utc_time<Duration>& tp);
-
+```
 ...
-
+```diff
   template<class charT, class traits, class Duration>
     basic_ostream<charT, traits>&
       operator<<(basic_ostream<charT, traits>& os, const tai_time<Duration>& t);
@@ -278,9 +278,9 @@ Modify section 27.2 Header `<chrono>` synopsis
 -   basic_ostream<charT, traits>&
 -     to_stream(basic_ostream<charT, traits>& os, const charT* fmt,
 -               const tai_time<Duration>& tp);
-
+```
 ...
-
+```diff
   template<class charT, class traits, class Duration>
     basic_ostream<charT, traits>&
       operator<<(basic_ostream<charT, traits>& os, const gps_time<Duration>& t);
@@ -288,9 +288,9 @@ Modify section 27.2 Header `<chrono>` synopsis
 -   basic_ostream<charT, traits>&
 -     to_stream(basic_ostream<charT, traits>& os, const charT* fmt,
 -               const gps_time<Duration>& tp);
-
+```
 ...
-
+```diff
 template<class charT, class traits, class Duration>
   basic_ostream<charT, traits>&
     operator<<(basic_ostream<charT, traits>& os, const file_time<Duration>& tp);
@@ -298,9 +298,9 @@ template<class charT, class traits, class Duration>
 -   basic_ostream<charT, traits>&
 -     to_stream(basic_ostream<charT, traits>& os, const charT* fmt,
 -               const file_time<Duration>& tp);
-
+```
 ...
-
+```diff
   template<class charT, class traits, class Duration>
     basic_ostream<charT, traits>&
       operator<<(basic_ostream<charT, traits>& os, const local_time<Duration>& tp);
@@ -309,27 +309,27 @@ template<class charT, class traits, class Duration>
 -     to_stream(basic_ostream<charT, traits>& os, const charT* fmt,
 -               const local_time<Duration>& tp,
 -               const string* abbrev = nullptr, const seconds* offset_sec = nullptr);
-
+```
 ...
-
+```diff
   template<class charT, class traits>
     basic_ostream<charT, traits>&
       operator<<(basic_ostream<charT, traits>& os, const day& d);
 - template<class charT, class traits>
 -   basic_ostream<charT, traits>&
 -     to_stream(basic_ostream<charT, traits>& os, const charT* fmt, const day& d);
-
+```
 ...
-
+```diff
   template<class charT, class traits>
     basic_ostream<charT, traits>&
       operator<<(basic_ostream<charT, traits>& os, const month& m);
 - template<class charT, class traits>
 -   basic_ostream<charT, traits>&
 -     to_stream(basic_ostream<charT, traits>& os, const charT* fmt, const month& m);
-
+```
 ...
-
+```diff
   template<class charT, class traits>
     basic_ostream<charT, traits>&
       operator<<(basic_ostream<charT, traits>& os, const year& y);
@@ -337,9 +337,9 @@ template<class charT, class traits, class Duration>
 - template<class charT, class traits>
 -   basic_ostream<charT, traits>&
 -     to_stream(basic_ostream<charT, traits>& os, const charT* fmt, const year& y);
-
+```
 ...
-
+```diff
   template<class charT, class traits>
     basic_ostream<charT, traits>&
       operator<<(basic_ostream<charT, traits>& os, const weekday& wd);
@@ -347,18 +347,18 @@ template<class charT, class traits, class Duration>
 - template<class charT, class traits>
 -   basic_ostream<charT, traits>&
 -     to_stream(basic_ostream<charT, traits>& os, const charT* fmt, const weekday& wd);
-
+```
 ...
-
+```diff
   template<class charT, class traits>
     basic_ostream<charT, traits>&
       operator<<(basic_ostream<charT, traits>& os, const month_day& md);
 - template<class charT, class traits>
 -   basic_ostream<charT, traits>&
 -     to_stream(basic_ostream<charT, traits>& os, const charT* fmt, const month_day& md);
-
+```
 ...
-
+```diff
   template<class charT, class traits>
     basic_ostream<charT, traits>&
       operator<<(basic_ostream<charT, traits>& os, const year_month& ym);
@@ -366,9 +366,9 @@ template<class charT, class traits, class Duration>
 - template<class charT, class traits>
 -   basic_ostream<charT, traits>&
 -     to_stream(basic_ostream<charT, traits>& os, const charT* fmt, const year_month& ym);
-
+```
 ...
-
+```diff
   template<class charT, class traits>
     basic_ostream<charT, traits>&
       operator<<(basic_ostream<charT, traits>& os, const year_month_day& ymd);
@@ -377,9 +377,9 @@ template<class charT, class traits, class Duration>
 -   basic_ostream<charT, traits>&
 -     to_stream(basic_ostream<charT, traits>& os, const charT* fmt,
 -               const year_month_day& ymd);
-
+```
 ...
-
+```diff
   template<class charT, class traits, class Duration, class TimeZonePtr>
     basic_ostream<charT, traits>&
       operator<<(basic_ostream<charT, traits>& os,
