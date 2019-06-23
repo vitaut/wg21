@@ -26,6 +26,11 @@ author:
 * Close the `chrono` namespace before [`formatter` specializations](
   #local_time_format-synopsis) and reopen it afterwards in Header `<chrono>`
   synopsis.
+* Add more diff context, in particular relevant `operator<<` declarations
+  and *Returns* elements.
+* Change `ymwdi` to `ymwd` to match the parameter name in
+  [`operator<<(basic_ostream<charT, traits>& os, const year_month_weekday& ymwd)`](
+    #year_month_weekday-insertion) (a drive-by fix).
 
 # Changes since R1
 
@@ -479,6 +484,16 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsection.27.
 Modify section 27.7.1.3 Non-member functions [[time.clock.system.nonmembers]](
 http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.27.7.1.3):
 
+> ```
+> template<class charT, class traits, class Duration>
+>   basic_ostream<charT, traits>&
+>     operator<<(basic_ostream<charT, traits>& os, const sys_time<Duration>& tp);
+> ```
+>
+> \pnum{1} *Remarks:* This operator shall not participate in overload resolution
+> if `treat_as_floating_point_v<typename Duration::rep>` is `true`, or
+> if `Duration{1} >= days{1}`.
+>
 <!-- This is needed for manipulators to work on the whole sys_time.
      Locale is needed because time_of_day may print localized "a.m./p.m." -->
 > \pnum{2} *Effects:*
@@ -487,6 +502,10 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.
 > - os << year_month_day{dp} << ’ ’ << time_of_day{tp-dp};
 > + os << format(os.getloc(), "{} {}", year_month_day{dp}, time_of_day{tp-dp});
 > ```
+>
+> \pnum{3} *Returns:* `os`.
+
+...
 
 > ::: rm
 > ```
@@ -507,6 +526,12 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.
 Modify section 27.7.2.3 Non-member functions [[time.clock.utc.nonmembers]](
 http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.27.7.2.3):
 
+> ```
+> template<class charT, class traits, class Duration>
+>   basic_ostream<charT, traits>&
+>     operator<<(basic_ostream<charT, traits>& os, const utc_time<Duration>& t);
+> ```
+>
 > ::: rm
 > \pnum{1} *Effects:* Calls `to_stream(os, fmt, t)`, where `fmt` is a string
 > containing `"%F %T"` widened to `charT`.
@@ -517,6 +542,8 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.
 > \pnum{1} *Effects:* Equivalent to `os << format(fmt, t)`, where `fmt` is a
 > string containing `"{:%F %T}"` widened to `charT`.
 > :::
+>
+> \pnum{2} *Returns:* `os`.
 
 > ::: rm
 > ```
@@ -539,6 +566,12 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.
 Modify section 27.7.3.3 Non-member functions [[time.clock.tai.nonmembers]](
 http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.27.7.3.3):
 
+> ```
+> template<class charT, class traits, class Duration>
+>   basic_ostream<charT, traits>&
+>     operator<<(basic_ostream<charT, traits>& os, const tai_time<Duration>& t);
+> ```
+>
 > ::: rm
 > \pnum{1} *Effects:* Calls `to_stream(os, fmt, t)`, where `fmt` is a string
 > containing `"%F %T"` widened to `charT`.
@@ -547,6 +580,8 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.
 > \pnum{1} *Effects:* Equivalent to `os << format(fmt, t)`, where `fmt` is a
 > string containing `"{:%F %T}"` widened to `charT`.
 > :::
+>
+> \pnum{2} *Returns:* `os`.
 
 > ::: rm
 > ```
@@ -585,6 +620,11 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.
 Modify section 27.7.4.3 Non-member functions [[time.clock.gps.nonmembers]](
 http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.27.7.4.3):
 
+> ```
+> template<class charT, class traits, class Duration>
+>   basic_ostream<charT, traits>&
+>     operator<<(basic_ostream<charT, traits>& os, const gps_time<Duration>& t);
+> ```
 > ::: rm
 > \pnum{1} *Effects:* Calls `to_stream(os, fmt, t)`, where `fmt` is a string
 > containing `"%F %T"` widened to `charT`.
@@ -593,6 +633,8 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.
 > \pnum{1} *Effects:* Equivalent to `os << format(fmt, t)`, where `fmt` is a
 > string containing `"{:%F %T}"` widened to `charT`.
 > :::
+>
+> \pnum{2} *Returns:* `os`.
 
 > ::: rm
 > ```
@@ -631,6 +673,11 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.
 Modify section 27.7.5.3 Non-member functions [[time.clock.file.nonmembers]](
 http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.27.7.5.3):
 
+> ```
+> template<class charT, class traits, class Duration>
+>   basic_ostream<charT, traits>&
+>     operator<<(basic_ostream<charT, traits>& os, const file_time<Duration>& t);
+> ```
 > ::: rm
 > \pnum{1} *Effects:* Calls `to_stream(os, fmt, t)`, where `fmt` is a string
 > containing `"%F %T"` widened to `charT`.
@@ -639,6 +686,8 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.
 > \pnum{1} *Effects:* Equivalent to `os << format(fmt, t)`, where `fmt` is a
 > string containing `"{:%F %T}"` widened to `charT`.
 > :::
+>
+> \pnum{2} *Returns:* `os`.
 
 > ::: rm
 > ```
@@ -685,9 +734,16 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsection.27.
 Modify section 27.8.3.3 Non-member functions [[time.cal.day.nonmembers]](
 http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.27.8.3.3):
 
+> ```
+> template<class charT, class traits>
+>   basic_ostream<charT, traits>&
+>     operator<<(basic_ostream<charT, traits>& os, const day& d);
+> ```
 > \pnum{7} *Effects:* Inserts `format(fmt, d)` where `fmt` is
 > [`"%d"`]{.rm}[`"{:%d}"`]{.add} widened to `charT`. If `!d.ok()`, appends with
 >`" is not a valid day"`.
+>
+> \pnum{8} *Returns:* `os`.
 
 > ::: rm
 > ```
@@ -705,9 +761,16 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.
 Modify section 27.8.4.3 Non-member functions [[time.cal.month.nonmembers]](
 http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.27.8.4.3):
 
+> ```
+> template<class charT, class traits>
+>   basic_ostream<charT, traits>&
+>     operator<<(basic_ostream<charT, traits>& os, const month& m);
+> ```
 > \pnum{7} *Effects:* If `m.ok() == true` inserts `format(os.getloc(), fmt, m)`
 > where `fmt` is [`"%b"`]{.rm}[`"{:%b}"`]{.add} widened to `charT`. Otherwise
 > inserts `unsigned{m} << is not a valid month"`.
+>
+> \pnum{8} *Returns:* `os`.
 
 > ::: rm
 > ```
@@ -725,9 +788,16 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.
 Modify section 27.8.5.3 Non-member functions [[time.cal.year.nonmembers]](
 http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.27.8.5.3):
 
+> ```
+> template<class charT, class traits>
+>   basic_ostream<charT, traits>&
+>     operator<<(basic_ostream<charT, traits>& os, const year& y);
+> ```
 > \pnum{7} *Effects:* Inserts `format(fmt, y)` where `fmt` is
 > [`"%Y"`]{.rm}[`"{%Y:}"`]{.add} widened to `charT`. If `!y.ok()`, appends with
 > `" is not a valid year"`.
+>
+> \pnum{8} *Returns:* `os`.
 
 > ::: rm
 > ```
@@ -745,9 +815,16 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.
 Modify section 27.8.6.3 Non-member functions [[time.cal.wd.nonmembers]](
 http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.27.8.6.3):
 
+> ```
+> template<class charT, class traits>
+>   basic_ostream<charT, traits>&
+>     operator<<(basic_ostream<charT, traits>& os, const weekday& wd);
+> ```
 > \pnum{6} *Effects:* If `wd.ok() == true` inserts `format(os.getloc(), fmt, m)`
 > where `fmt` is [`"%a"`]{.rm}[`"{:%a}"`]{.add} widened to `charT`. Otherwise
 > inserts `unsigned{m} << is not a valid weekday"`.
+>
+> \pnum{7} *Returns:* `os`.
 
 > ::: rm
 > ```
@@ -765,6 +842,11 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.
 Modify section 27.8.7.3 Non-member functions [[time.cal.wdidx.nonmembers]](
 http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.27.8.7.3):
 
+> ```
+> template<class charT, class traits>
+>   basic_ostream<charT, traits>&
+>     operator<<(basic_ostream<charT, traits>& os, const weekday_indexed& wdi);
+> ```
 > ::: rm
 > \pnum{2} *Effects:* `os << wdi.weekday() << ’[’ << wdi.index()`. If
 > `wdi.index()` is in the range `[1, 5]`, appends with `’]’`, otherwise appends
@@ -778,10 +860,17 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.
 > ```
 > where `i` is `wdi.index()`.
 > :::
+>
+> \pnum{3} *Returns:* `os`.
 
 Modify section 27.8.8.3 Non-member functions [[time.cal.wdlast.nonmembers]](
 http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.27.8.8.3):
 
+> ```
+> template<class charT, class traits>
+>   basic_ostream<charT, traits>&
+>     operator<<(basic_ostream<charT, traits>& os, const weekday_last& wdl);
+> ```
 > ::: rm
 > \pnum{2} *Returns:* `os << wdl.weekday() << "[last]"`.
 > :::
@@ -792,6 +881,11 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.
 Modify section 27.8.9.3 Non-member functions [[time.cal.md.nonmembers]](
 http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.27.8.9.3):
 
+> ```
+> template<class charT, class traits>
+>   basic_ostream<charT, traits>&
+>     operator<<(basic_ostream<charT, traits>& os, const month_day& md);
+> ```
 > ::: rm
 > \pnum{3} *Returns:* `os << md.month() << ’/’ << md.day()`.
 > :::
@@ -806,15 +900,20 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.
 >     to_stream(basic_ostream<charT, traits>& os, const charT* fmt, const month_day& md);
 > ```
 >
-> \pnum{8} *Effects:* Streams `md` into `os` using the format specified by the
+> \pnum{4} *Effects:* Streams `md` into `os` using the format specified by the
 > NTCTS `fmt`. `fmt` encoding follows the rules specified in 27.11.
 >
-> \pnum{9} *Returns:* `os`.
+> \pnum{5} *Returns:* `os`.
 > :::
 
 Modify section 27.8.10 Class `month_day_last` [[time.cal.mdlast]](
 http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsection.27.8.10):
 
+> ```
+> template<class charT, class traits>
+>   basic_ostream<charT, traits>&
+>     operator<<(basic_ostream<charT, traits>& os, const month_day_last& mdl);
+> ```
 > ::: rm
 > \pnum{9} *Returns:* `os << mdl.month() << "/last"`.
 > :::
@@ -825,6 +924,11 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsection.27.
 Modify section 27.8.11.3 Non-member functions [[time.cal.mwd.nonmembers]](
 http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.27.8.11.3):
 
+> ```
+> template<class charT, class traits>
+>   basic_ostream<charT, traits>&
+>     operator<<(basic_ostream<charT, traits>& os, const month_weekday& mwd);
+> ```
 > ::: rm
 > \pnum{2} *Returns:* `os << mwd.month() << ’/’ << mwd.weekday_indexed()`.
 > :::
@@ -835,6 +939,11 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.
 Modify section 27.8.12.3 Non-member functions [[time.cal.mwdlast.nonmembers]](
 http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.27.8.12.3):
 
+> ```
+> template<class charT, class traits>
+>   basic_ostream<charT, traits>&
+>     operator<<(basic_ostream<charT, traits>& os, const month_weekday_last& mwdl);
+> ```
 > ::: rm
 > \pnum{2} *Returns:* `os << mwdl.month() << ’/’ << mwdl.weekday_last()`.
 > :::
@@ -845,11 +954,16 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.
 Modify section 27.8.13.3 Non-member functions [[time.cal.ym.nonmembers]](
 http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.27.8.13.3):
 
+> ```
+> template<class charT, class traits>
+>   basic_ostream<charT, traits>&
+>     operator<<(basic_ostream<charT, traits>& os, const year_month& ym);
+> ```
 > ::: rm
-> \pnum{10} *Returns:* `os << ym.year() << ’/’ << ym.month()`.
+> \pnum{11} *Returns:* `os << ym.year() << ’/’ << ym.month()`.
 > :::
 > ::: add
-> \pnum{10} *Returns:* `os << format(os.getloc(), "{}/{}", ym.year(), ym.month())`.
+> \pnum{11} *Returns:* `os << format(os.getloc(), "{}/{}", ym.year(), ym.month())`.
 > :::
 
 > ::: rm
@@ -859,18 +973,25 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.
 >     to_stream(basic_ostream<charT, traits>& os, const charT* fmt, const year_month& ym);
 > ```
 >
-> \pnum{11} *Effects:* Streams `ym` into `os` using the format specified by the
+> \pnum{12} *Effects:* Streams `ym` into `os` using the format specified by the
 > NTCTS `fmt`. `fmt` encoding follows the rules specified in 27.11.
 >
-> \pnum{12} *Returns:* `os`.
+> \pnum{13} *Returns:* `os`.
 > :::
 
 Modify section 27.8.14.3 Non-member functions [[time.cal.ymd.nonmembers]](
 http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.27.8.14.3):
 
+> ```
+> template<class charT, class traits>
+>   basic_ostream<charT, traits>&
+>     operator<<(basic_ostream<charT, traits>& os, const year_month_day& ymd);
+> ```
 > \pnum{11} *Effects:* Inserts `format(fmt, ymd)` where `fmt` is
 > [`"%F"`]{.rm}[`"{:%F}"`]{.add} widened to `charT`. If `!ymd.ok()`, appends
 > with `" is not a valid date"`.
+>
+> \pnum{12} *Returns:* `os`.
 
 > ::: rm
 > ```
@@ -888,6 +1009,11 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.
 Modify section 27.8.15.3 Non-member functions [[time.cal.ymdlast.nonmembers]](
 http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.27.8.15.3):
 
+> ```
+> template<class charT, class traits>
+>   basic_ostream<charT, traits>&
+>     operator<<(basic_ostream<charT, traits>& os, const year_month_day_last& ymdl);
+> ```
 > ::: rm
 > \pnum{9} *Returns:* `os << ymdl.year() << ’/’ << ymdl.month_day_last()`.
 > :::
@@ -898,16 +1024,31 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.
 Modify section 27.8.16.3 Non-member functions [[time.cal.ymwd.nonmembers]](
 http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.27.8.16.3):
 
+[]{#year_month_weekday-insertion}
+
+> ```
+> template<class charT, class traits>
+>   basic_ostream<charT, traits>&
+>     operator<<(basic_ostream<charT, traits>& os, const year_month_weekday& ymwd);
+> ```
 > ::: rm
 > \pnum{8} *Returns:* `os << ymwdi.year() << ’/’ << ymwdi.month() << ’/’ << ymwdi.weekday_indexed()`.
 > :::
 > ::: add
-> \pnum{8} *Returns:* `os << format(os.getloc(), "{}/{}/{}", ymwdi.year(), ymwdi.month(), ymwdi.weekday_indexed())`.
+> \pnum{8} *Returns:* `os << format(os.getloc(), "{}/{}/{}", ymwd.year(), ymwd.month(), ymwd.weekday_indexed())`.
 > :::
+
+Note a drive-by fix above: `ymwdi` changed to `ymwd` to match the parameter
+name.
 
 Modify section 27.8.17.3 Non-member functions [[time.cal.ymwdlast.nonmembers]](
 http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.27.8.17.3):
 
+> ```
+> template<class charT, class traits>
+>   basic_ostream<charT, traits>&
+>     operator<<(basic_ostream<charT, traits>& os, const year_month_weekday_last& ymwdl);
+> ```
 > ::: rm
 > \pnum{8} *Returns:* `os << ymwdl.year() << ’/’ << ymwdl.month() << ’/’ << ymwdl.weekday_last(`.
 > :::
