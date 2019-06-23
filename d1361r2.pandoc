@@ -1,7 +1,7 @@
 ---
 title: Integration of chrono with text formatting
-document: P1361R1
-date: 2019-06-14
+document: D1361R2
+date: 2019-06-23
 audience:
   - Library Working Group
 author:
@@ -147,7 +147,7 @@ std::cout << std::format(std::locale{"fi_FI"}, "Localized time is {:%c}\n", zt);
 
 # Proposed Changes
 
-We propose the following changes to [@N4727] and [@P0645]:
+We propose the following changes to [@N4820] and [@P0645]:
 
 1. Replace `std::chrono::to_stream` overloads with `std::formatter`
    specializations to make chrono types formattable with functions from
@@ -225,13 +225,13 @@ Formatting of chrono durations and locale support have been implemented in the
 
 # Proposed Wording
 
-This wording is based on the working draft [@N4727] unless stated otherwise.
+This wording is based on the working draft [@N4820] unless stated otherwise.
 
-Modify section 25.2 Header `<chrono>` synopsis
-[[time.syn]](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#section.25.2):
+Modify section 27.2 Header `<chrono>` synopsis
+[[time.syn]](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#section.27.2):
 
 ```diff
-  // 25.5.10, duration I/O
+  // 27.5.10, duration I/O
   template<class charT, class traits, class Rep, class Period>
     basic_ostream<charT, traits>&
       operator<<(basic_ostream<charT, traits>& os,
@@ -385,7 +385,7 @@ template<class charT, class traits, class Duration>
 
 ...
 
-  // 25.11, formatting
+  // 27.11, formatting
 - template<class charT, class Streamable>
 -   basic_string<charT>
 -     format(const charT* fmt, const Streamable& s);
@@ -447,8 +447,8 @@ template<class charT, class traits, class Duration>
 +   struct formatter<chrono::zoned_time<Duration, TimeZonePtr>, charT>;
 ```
 
-Modify section 25.5.10 I/O [[time.duration.io]](
-http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsection.25.5.10):
+Modify section 27.5.10 I/O [[time.duration.io]](
+http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsection.27.5.10):
 
 > ::: rm
 > ```
@@ -459,13 +459,13 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsection.25.
 > ```
 >
 > \pnum{6} *Effects:* Streams `d` into `os` using the format specified by the
-> NTCTS `fmt`. `fmt` encoding follows the rules specified in 25.11.
+> NTCTS `fmt`. `fmt` encoding follows the rules specified in 27.11.
 >
 > \pnum{7} *Returns:* `os`.
 > :::
 
-Modify section 25.7.1.3 Non-member functions [[time.clock.system.nonmembers]](
-http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.7.1.3):
+Modify section 27.7.1.3 Non-member functions [[time.clock.system.nonmembers]](
+http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.27.7.1.3):
 
 <!-- This is needed for manipulators to work on the whole sys_time.
      Locale is needed because time_of_day may print localized "a.m./p.m." -->
@@ -484,7 +484,7 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.
 > ```
 >
 > \pnum{7} *Effects:* Streams `tp` into `os` using the format specified by the
-> NTCTS `fmt`. `fmt` encoding follows the rules specified in 25.11.
+> NTCTS `fmt`. `fmt` encoding follows the rules specified in 27.11.
 > If `%Z` is used, it will be replaced with `"UTC"` widened to `charT`. If `%z`
 > is used (or a modified variant of `%z`), an offset of `0min` will be
 > formatted.
@@ -492,8 +492,8 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.
 > \pnum{8} *Returns:* `os`.
 > :::
 
-Modify section 25.7.2.3 Non-member functions [[time.clock.utc.nonmembers]](
-http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.7.2.3):
+Modify section 27.7.2.3 Non-member functions [[time.clock.utc.nonmembers]](
+http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.27.7.2.3):
 
 > ::: rm
 > \pnum{1} *Effects:* Calls `to_stream(os, fmt, t)`, where `fmt` is a string
@@ -514,7 +514,7 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.
 > ```
 >
 > \pnum{3} *Effects:* Streams `tp` into `os` using the format specified by the
-> NTCTS `fmt`. `fmt` encoding follows the rules specified in 25.11.
+> NTCTS `fmt`. `fmt` encoding follows the rules specified in 27.11.
 > If `%Z`is used, it will be replaced with `"UTC"` widened to `charT`. If `%z`
 > is used (or a modified variant of `%z`), an offset of `0min` will be
 > formatted. If `tp` represents a time during a leap second insertion, and if a
@@ -524,8 +524,8 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.
 > \pnum{4} *Returns:* `os`.
 > :::
 
-Modify section 25.7.3.3 Non-member functions [[time.clock.tai.nonmembers]](
-http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.7.3.3):
+Modify section 27.7.3.3 Non-member functions [[time.clock.tai.nonmembers]](
+http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.27.7.3.3):
 
 > ::: rm
 > \pnum{1} *Effects:* Calls `to_stream(os, fmt, t)`, where `fmt` is a string
@@ -544,7 +544,7 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.
 > ```
 >
 > \pnum{3} *Effects:* Streams `tp` into `os` using the format specified by the
-> NTCTS `fmt`. `fmt` encoding follows the rules specified in 25.11.
+> NTCTS `fmt`. `fmt` encoding follows the rules specified in 27.11.
 > If `%Z` is used, it will be replaced with `"TAI"`. If `%z` is used (or a
 > modified variant of `%z`), an offset of `0min` will be formatted. The date
 > and time formatted shall be equivalent to that formatted by a `sys_time`
@@ -570,8 +570,8 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.
 > ```
 > --- _end example_]
 
-Modify section 25.7.4.3 Non-member functions [[time.clock.gps.nonmembers]](
-http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.7.4.3):
+Modify section 27.7.4.3 Non-member functions [[time.clock.gps.nonmembers]](
+http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.27.7.4.3):
 
 > ::: rm
 > \pnum{1} *Effects:* Calls `to_stream(os, fmt, t)`, where `fmt` is a string
@@ -590,7 +590,7 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.
 > ```
 >
 > \pnum{3} *Effects:* Streams `tp` into `os` using the format specified by the
-> NTCTS `fmt`. `fmt` encoding follows the rules specified in 25.11.
+> NTCTS `fmt`. `fmt` encoding follows the rules specified in 27.11.
 > If `%Z` is used, it will be replaced with `"GPS"`. If `%z` is used (or a
 > modified variant of `%z`), an offset of `0min` will be formatted. The date
 > and time formatted shall be equivalent to that formatted by a `sys_time`
@@ -616,8 +616,8 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.
 > ```
 > --- _end example_]
 
-Modify section 25.7.5.3 Non-member functions [[time.clock.file.nonmembers]](
-http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.7.5.3):
+Modify section 27.7.5.3 Non-member functions [[time.clock.file.nonmembers]](
+http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.27.7.5.3):
 
 > ::: rm
 > \pnum{1} *Effects:* Calls `to_stream(os, fmt, t)`, where `fmt` is a string
@@ -636,7 +636,7 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.
 > ```
 >
 > \pnum{3} *Effects:* Streams `tp` into `os` using the format specified by the
-> NTCTS `fmt`. `fmt` encoding follows the rules specified in 25.11.
+> NTCTS `fmt`. `fmt` encoding follows the rules specified in 27.11.
 > If `%Z` is used, it will be replaced with `"UTC"` widened to `charT`. If `%z`
 > is used > (or a modified variant of `%z` ), an offset of `0min` will be
 > formatted. The > date and time formatted shall be equivalent to that formatted
@@ -646,8 +646,8 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.
 > \pnum{4} *Returns:* `os`.
 > :::
 
-Modify section 25.7.8 Local time [[time.clock.local]](
-http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsection.25.7.8):
+Modify section 27.7.8 Local time [[time.clock.local]](
+http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsection.27.7.8):
 
 > ::: rm
 > ```
@@ -658,7 +658,7 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsection.25.
 > ```
 >
 > \pnum{4} *Effects:* Streams `tp` into `os` using the format specified by the
-> NTCTS `fmt`. `fmt` encoding follows the rules specified in 25.11.
+> NTCTS `fmt`. `fmt` encoding follows the rules specified in 27.11.
 > If `%Z` is used, it will be replaced with `*abbrev` if `abbrev` is not equal
 > to `nullptr`. If `abbrev` is equal to `nullptr` (and `%Z` is used),
 > `os.setstate(ios_base::failbit)` shall be called. If `%z` is used (or a
@@ -670,8 +670,8 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsection.25.
 > \pnum{4} *Returns:* `os`.
 > :::
 
-Modify section 25.8.3.3 Non-member functions [[time.cal.day.nonmembers]](
-http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.8.3.3):
+Modify section 27.8.3.3 Non-member functions [[time.cal.day.nonmembers]](
+http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.27.8.3.3):
 
 > \pnum{7} *Effects:* Inserts `format(fmt, d)` where `fmt` is
 > [`"%d"`]{.rm}[`"{:%d}"`]{.add} widened to `charT`. If `!d.ok()`, appends with
@@ -685,13 +685,13 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.
 > ```
 >
 > \pnum{9} *Effects:* Streams `d` into `os` using the format specified by the
-> NTCTS `fmt`. `fmt` encoding follows the rules specified in 25.11.
+> NTCTS `fmt`. `fmt` encoding follows the rules specified in 27.11.
 >
 > \pnum{10} *Returns:* `os`.
 > :::
 
-Modify section 25.8.4.3 Non-member functions [[time.cal.month.nonmembers]](
-http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.8.4.3):
+Modify section 27.8.4.3 Non-member functions [[time.cal.month.nonmembers]](
+http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.27.8.4.3):
 
 > \pnum{7} *Effects:* If `m.ok() == true` inserts `format(os.getloc(), fmt, m)`
 > where `fmt` is [`"%b"`]{.rm}[`"{:%b}"`]{.add} widened to `charT`. Otherwise
@@ -705,13 +705,13 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.
 > ```
 >
 > \pnum{9} *Effects:* Streams `m` into `os` using the format specified by the
-> NTCTS `fmt`. `fmt` encoding follows the rules specified in 25.11.
+> NTCTS `fmt`. `fmt` encoding follows the rules specified in 27.11.
 >
 > \pnum{10} *Returns:* `os`.
 > :::
 
-Modify section 25.8.5.3 Non-member functions [[time.cal.year.nonmembers]](
-http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.8.5.3):
+Modify section 27.8.5.3 Non-member functions [[time.cal.year.nonmembers]](
+http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.27.8.5.3):
 
 > \pnum{7} *Effects:* Inserts `format(fmt, y)` where `fmt` is
 > [`"%Y"`]{.rm}[`"{%Y:}"`]{.add} widened to `charT`. If `!y.ok()`, appends with
@@ -725,13 +725,13 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.
 > ```
 >
 > \pnum{9} *Effects:* Streams `y` into `os` using the format specified by the
-> NTCTS `fmt`. `fmt` encoding follows the rules specified in 25.11.
+> NTCTS `fmt`. `fmt` encoding follows the rules specified in 27.11.
 >
 > \pnum{10} *Returns:* `os`.
 > :::
 
-Modify section 25.8.6.3 Non-member functions [[time.cal.wd.nonmembers]](
-http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.8.6.3):
+Modify section 27.8.6.3 Non-member functions [[time.cal.wd.nonmembers]](
+http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.27.8.6.3):
 
 > \pnum{6} *Effects:* If `wd.ok() == true` inserts `format(os.getloc(), fmt, m)`
 > where `fmt` is [`"%a"`]{.rm}[`"{:%a}"`]{.add} widened to `charT`. Otherwise
@@ -745,13 +745,13 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.
 > ```
 >
 > \pnum{8} *Effects:* Streams `wd` into `os` using the format specified by the
-> NTCTS `fmt`. `fmt` encoding follows the rules specified in 25.11.
+> NTCTS `fmt`. `fmt` encoding follows the rules specified in 27.11.
 >
 > \pnum{9} *Returns:* `os`.
 > :::
 
-Modify section 25.8.7.3 Non-member functions [[time.cal.wdidx.nonmembers]](
-http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.8.7.3):
+Modify section 27.8.7.3 Non-member functions [[time.cal.wdidx.nonmembers]](
+http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.27.8.7.3):
 
 > ::: rm
 > \pnum{2} *Effects:* `os << wdi.weekday() << ’[’ << wdi.index()`. If
@@ -767,8 +767,8 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.
 > where `i` is `wdi.index()`.
 > :::
 
-Modify section 25.8.8.3 Non-member functions [[time.cal.wdlast.nonmembers]](
-http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.8.8.3):
+Modify section 27.8.8.3 Non-member functions [[time.cal.wdlast.nonmembers]](
+http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.27.8.8.3):
 
 > ::: rm
 > \pnum{2} *Returns:* `os << wdl.weekday() << "[last]"`.
@@ -777,8 +777,8 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.
 > \pnum{2} *Returns:* `os << format(os.getloc(), "{}[last]", wdl.weekday())`.
 > :::
 
-Modify section 25.8.9.3 Non-member functions [[time.cal.md.nonmembers]](
-http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.8.9.3):
+Modify section 27.8.9.3 Non-member functions [[time.cal.md.nonmembers]](
+http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.27.8.9.3):
 
 > ::: rm
 > \pnum{3} *Returns:* `os << md.month() << ’/’ << md.day()`.
@@ -795,13 +795,13 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.
 > ```
 >
 > \pnum{8} *Effects:* Streams `md` into `os` using the format specified by the
-> NTCTS `fmt`. `fmt` encoding follows the rules specified in 25.11.
+> NTCTS `fmt`. `fmt` encoding follows the rules specified in 27.11.
 >
 > \pnum{9} *Returns:* `os`.
 > :::
 
-Modify section 25.8.10 Class `month_day_last` [[time.cal.mdlast]](
-http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsection.25.8.10):
+Modify section 27.8.10 Class `month_day_last` [[time.cal.mdlast]](
+http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsection.27.8.10):
 
 > ::: rm
 > \pnum{9} *Returns:* `os << mdl.month() << "/last"`.
@@ -810,8 +810,8 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsection.25.
 > \pnum{9} *Returns:* `os << format(os.getloc(), "{}/last", md.month())`.
 > :::
 
-Modify section 25.8.11.3 Non-member functions [[time.cal.mwd.nonmembers]](
-http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.8.11.3):
+Modify section 27.8.11.3 Non-member functions [[time.cal.mwd.nonmembers]](
+http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.27.8.11.3):
 
 > ::: rm
 > \pnum{2} *Returns:* `os << mwd.month() << ’/’ << mwd.weekday_indexed()`.
@@ -820,8 +820,8 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.
 > \pnum{2} *Returns:* `os << format(os.getloc(), "{}/{}", mwd.month(), mwd.weekday_indexed())`.
 > :::
 
-Modify section 25.8.12.3 Non-member functions [[time.cal.mwdlast.nonmembers]](
-http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.8.12.3):
+Modify section 27.8.12.3 Non-member functions [[time.cal.mwdlast.nonmembers]](
+http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.27.8.12.3):
 
 > ::: rm
 > \pnum{2} *Returns:* `os << mwdl.month() << ’/’ << mwdl.weekday_last()`.
@@ -830,8 +830,8 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.
 > \pnum{2} *Returns:* `os << format(os.getloc(), "{}/{}", mwdl.month(), mwdl.weekday_last())`.
 > :::
 
-Modify section 25.8.13.3 Non-member functions [[time.cal.ym.nonmembers]](
-http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.8.13.3):
+Modify section 27.8.13.3 Non-member functions [[time.cal.ym.nonmembers]](
+http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.27.8.13.3):
 
 > ::: rm
 > \pnum{10} *Returns:* `os << ym.year() << ’/’ << ym.month()`.
@@ -848,13 +848,13 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.
 > ```
 >
 > \pnum{11} *Effects:* Streams `ym` into `os` using the format specified by the
-> NTCTS `fmt`. `fmt` encoding follows the rules specified in 25.11.
+> NTCTS `fmt`. `fmt` encoding follows the rules specified in 27.11.
 >
 > \pnum{12} *Returns:* `os`.
 > :::
 
-Modify section 25.8.14.3 Non-member functions [[time.cal.ymd.nonmembers]](
-http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.8.14.3):
+Modify section 27.8.14.3 Non-member functions [[time.cal.ymd.nonmembers]](
+http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.27.8.14.3):
 
 > \pnum{11} *Effects:* Inserts `format(fmt, ymd)` where `fmt` is
 > [`"%F"`]{.rm}[`"{:%F}"`]{.add} widened to `charT`. If `!ymd.ok()`, appends
@@ -868,13 +868,13 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.
 > ```
 >
 > \pnum{13} *Effects:* Streams `ym` into `os` using the format specified by the
-> NTCTS `fmt`. `fmt` encoding follows the rules specified in 25.11.
+> NTCTS `fmt`. `fmt` encoding follows the rules specified in 27.11.
 >
 > \pnum{14} *Returns:* `os`.
 > :::
 
-Modify section 25.8.15.3 Non-member functions [[time.cal.ymdlast.nonmembers]](
-http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.8.15.3):
+Modify section 27.8.15.3 Non-member functions [[time.cal.ymdlast.nonmembers]](
+http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.27.8.15.3):
 
 > ::: rm
 > \pnum{9} *Returns:* `os << ymdl.year() << ’/’ << ymdl.month_day_last()`.
@@ -883,8 +883,8 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.
 > \pnum{9} *Returns:* `os << format(os.getloc(), "{}/{}", ymdl.year(), ymdl.month_day_last())`.
 > :::
 
-Modify section 25.8.16.3 Non-member functions [[time.cal.ymwd.nonmembers]](
-http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.8.16.3):
+Modify section 27.8.16.3 Non-member functions [[time.cal.ymwd.nonmembers]](
+http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.27.8.16.3):
 
 > ::: rm
 > \pnum{8} *Returns:* `os << ymwdi.year() << ’/’ << ymwdi.month() << ’/’ << ymwdi.weekday_indexed()`.
@@ -893,8 +893,8 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.
 > \pnum{8} *Returns:* `os << format(os.getloc(), "{}/{}/{}", ymwdi.year(), ymwdi.month(), ymwdi.weekday_indexed())`.
 > :::
 
-Modify section 25.8.17.3 Non-member functions [[time.cal.ymwdlast.nonmembers]](
-http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.8.17.3):
+Modify section 27.8.17.3 Non-member functions [[time.cal.ymwdlast.nonmembers]](
+http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.27.8.17.3):
 
 > ::: rm
 > \pnum{8} *Returns:* `os << ymwdl.year() << ’/’ << ymwdl.month() << ’/’ << ymwdl.weekday_last(`.
@@ -903,9 +903,9 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.
 > \pnum{8} *Returns:* `os << format(os.getloc(), "{}/{}/{}", ymwdl.year(), ymwdl.month(), ymwdl.weekday_last())`.
 > :::
 
-Modify section 25.10.7.4 Non-member functions
+Modify section 27.10.7.4 Non-member functions
 [[time.zone.zonedtime.nonmembers]](
-http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.25.10.7.4):
+http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.27.10.7.4):
 
 > ::: rm
 > ```
@@ -922,13 +922,13 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsubsection.
 > \pnum{6} *Returns:* `os`.
 > :::
 
-Modify section 25.11 Formatting [[time.format]](
-http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#section.25.11):
+Modify section 27.11 Formatting [[time.format]](
+http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#section.27.11):
 
 > ::: rm
 > \pnum{1} Each `format` overload specified in this subclause calls `to_stream`
 > unqualified, so as to enable argument dependent lookup
-> ([6.4.2](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#subsection.6.4.2)).
+> ([6.4.2](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsection.6.4.2)).
 >
 > ```
 > template<class charT, class Streamable>
@@ -956,9 +956,9 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#section.25.11)
 
 > ::: add
 > Each `formatter` specialization in the chrono library
-> ([25.2](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#section.25.2))
+> ([27.2](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#section.27.2))
 > satisfies the *Formatter* requirements
-> ([[formatter.requirements]](http://fmtlib.net/P0645R4.html#gensection-6)).
+> ([[formatter.requirements]](http://wg21.link/p0645r9#formatter.requirements)).
 >
 > The `parse` member functions of these formatters treat the formatting string
 > according to the following specification:
@@ -989,7 +989,7 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#section.25.11)
 
 > ::: rm
 > \pnum{16} Each conversion specifier is replaced by appropriate characters as
-> described in Table [88](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4778.pdf#table.25.88).
+> described in Table [87](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#table.27.87).
 > Some of the conversion specifiers depend on the locale which is imbued to the
 > `basic_ostream`. If the `Streamable` object does not contain the information
 > the conversion specifier refers to, the value streamed to the `basic_ostream`
@@ -1374,15 +1374,15 @@ Modify section 19.20.3.3 Class template `basic_format_context`
 
 ---
 references:
-  - id: N4727
-    citation-label: N4727
+  - id: N4820
+    citation-label: N4820
     title: Working Draft, Standard for Programming Language C++
     author:
       - family: Smith
         given: [Richard]
     issued:
-      year: 2018
-    URL: http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4727.pdf
+      year: 2019
+    URL: http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf
   - id: P0355
     citation-label: P0355
     title: Extending <chrono> to Calendars and Time Zones
@@ -1402,7 +1402,7 @@ references:
       given: [Victor]
     issued:
       year: 2018
-    URL: http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p0645r3.html
+    URL: http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p0645r9.html
   - id: PYSTR
     citation-label: PYSTR
     title: String Methods, The Python Standard Library
