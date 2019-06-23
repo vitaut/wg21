@@ -31,6 +31,7 @@ author:
 * Change `ymwdi` to `ymwd` to match the parameter name in
   [`operator<<(basic_ostream<charT, traits>& os, const year_month_weekday& ymwd)`](
     #year_month_weekday-insertion) (a drive-by fix).
+* Apply the widening wording to newly introduced format strings.
 
 # Changes since R1
 
@@ -496,14 +497,24 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.
 >
 <!-- This is needed for manipulators to work on the whole sys_time.
      Locale is needed because time_of_day may print localized "a.m./p.m." -->
+> ::: rm
 > \pnum{2} *Effects:*
-> ```diff
->   auto const dp = floor<days>(tp);
-> - os << year_month_day{dp} << ’ ’ << time_of_day{tp-dp};
-> + os << format(os.getloc(), "{} {}", year_month_day{dp}, time_of_day{tp-dp});
+> ```
+> auto const dp = floor<days>(tp);
+> os << year_month_day{dp} << ’ ’ << time_of_day{tp-dp};
 > ```
 >
 > \pnum{3} *Returns:* `os`.
+> :::
+> ::: add
+> Let `fmt` be a string containing `"{} {}"` widened to `charT`.
+>
+> \pnum{2} *Effects:* Equivalent to:
+> ```
+> auto const dp = floor<days>(tp);
+> return os << format(os.getloc(), fmt, year_month_day{dp}, time_of_day{tp-dp});
+> ```
+> :::
 
 ...
 
@@ -851,17 +862,19 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.
 > \pnum{2} *Effects:* `os << wdi.weekday() << ’[’ << wdi.index()`. If
 > `wdi.index()` is in the range `[1, 5]`, appends with `’]’`, otherwise appends
 > with `" is not a valid index]"`.
-> :::
-> ::: add
-> \pnum{2} *Effects:* Equivalent to
-> ```
-> os << format(os.getloc(), "{}[{}{}]", wdi.weekday(), i,
->              i >= 1 && i <= 5 ? "" : " is not a valid index");
-> ```
-> where `i` is `wdi.index()`.
-> :::
 >
 > \pnum{3} *Returns:* `os`.
+> :::
+> ::: add
+> Let `fmt` be a string containing `"{}[{}{}]"` widened to `charT`.
+>
+> \pnum{2} *Effects:* Equivalent to:
+> ```
+> auto i = wdi.index();
+> return os << format(os.getloc(), fmt, wdi.weekday(), i,
+>                     i >= 1 && i <= 5 ? "" : " is not a valid index");
+> ```
+> :::
 
 Modify section 27.8.8.3 Non-member functions [[time.cal.wdlast.nonmembers]](
 http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.27.8.8.3):
@@ -875,7 +888,12 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.
 > \pnum{2} *Returns:* `os << wdl.weekday() << "[last]"`.
 > :::
 > ::: add
-> \pnum{2} *Returns:* `os << format(os.getloc(), "{}[last]", wdl.weekday())`.
+> Let `fmt` be a string containing `"{}[last]"` widened to `charT`.
+>
+> \pnum{2} *Effects:* Equivalent to:
+> ```
+> return os << format(os.getloc(), fmt, wdl.weekday());
+> ```
 > :::
 
 Modify section 27.8.9.3 Non-member functions [[time.cal.md.nonmembers]](
@@ -890,7 +908,12 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.
 > \pnum{3} *Returns:* `os << md.month() << ’/’ << md.day()`.
 > :::
 > ::: add
-> \pnum{3} *Returns:* `os << format(os.getloc(), "{}/{}", md.month(), md.day())`.
+> Let `fmt` be a string containing `"{}/{}"` widened to `charT`.
+>
+> \pnum{3} *Effects:* Equivalent to:
+> ```
+> return os << format(os.getloc(), fmt, md.month(), md.day());
+> ```
 > :::
 
 > ::: rm
@@ -918,7 +941,12 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsection.27.
 > \pnum{9} *Returns:* `os << mdl.month() << "/last"`.
 > :::
 > ::: add
-> \pnum{9} *Returns:* `os << format(os.getloc(), "{}/last", md.month())`.
+> Let `fmt` be a string containing `"{}/last"` widened to `charT`.
+>
+> \pnum{9} *Effects:* Equivalent to:
+> ```
+> return os << format(os.getloc(), fmt, md.month());
+> ```
 > :::
 
 Modify section 27.8.11.3 Non-member functions [[time.cal.mwd.nonmembers]](
@@ -933,7 +961,12 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.
 > \pnum{2} *Returns:* `os << mwd.month() << ’/’ << mwd.weekday_indexed()`.
 > :::
 > ::: add
-> \pnum{2} *Returns:* `os << format(os.getloc(), "{}/{}", mwd.month(), mwd.weekday_indexed())`.
+> Let `fmt` be a string containing `"{}/{}"` widened to `charT`.
+>
+> \pnum{2} *Effects:* Equivalent to:
+> ```
+> return os << format(os.getloc(), fmt, mwd.month(), mwd.weekday_indexed());
+> ```
 > :::
 
 Modify section 27.8.12.3 Non-member functions [[time.cal.mwdlast.nonmembers]](
@@ -948,7 +981,12 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.
 > \pnum{2} *Returns:* `os << mwdl.month() << ’/’ << mwdl.weekday_last()`.
 > :::
 > ::: add
-> \pnum{2} *Returns:* `os << format(os.getloc(), "{}/{}", mwdl.month(), mwdl.weekday_last())`.
+> Let `fmt` be a string containing `"{}/{}"` widened to `charT`.
+>
+> \pnum{2} *Effects:* Equivalent to:
+> ```
+> return os << format(os.getloc(), fmt, mwdl.month(), mwdl.weekday_last());
+> ```
 > :::
 
 Modify section 27.8.13.3 Non-member functions [[time.cal.ym.nonmembers]](
@@ -963,7 +1001,12 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.
 > \pnum{11} *Returns:* `os << ym.year() << ’/’ << ym.month()`.
 > :::
 > ::: add
-> \pnum{11} *Returns:* `os << format(os.getloc(), "{}/{}", ym.year(), ym.month())`.
+> Let `fmt` be a string containing `"{}/{}"` widened to `charT`.
+>
+> \pnum{11} *Effects:* Equivalent to:
+> ```
+> return os << format(os.getloc(), fmt, ym.year(), ym.month());
+> ```
 > :::
 
 > ::: rm
@@ -1018,7 +1061,12 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.
 > \pnum{9} *Returns:* `os << ymdl.year() << ’/’ << ymdl.month_day_last()`.
 > :::
 > ::: add
-> \pnum{9} *Returns:* `os << format(os.getloc(), "{}/{}", ymdl.year(), ymdl.month_day_last())`.
+> Let `fmt` be a string containing `"{}/{}"` widened to `charT`.
+>
+> \pnum{9} *Effects:* Equivalent to:
+> ```
+> return os << format(os.getloc(), fmt, ymdl.year(), ymdl.month_day_last());
+> ```
 > :::
 
 Modify section 27.8.16.3 Non-member functions [[time.cal.ymwd.nonmembers]](
@@ -1035,7 +1083,13 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.
 > \pnum{8} *Returns:* `os << ymwdi.year() << ’/’ << ymwdi.month() << ’/’ << ymwdi.weekday_indexed()`.
 > :::
 > ::: add
-> \pnum{8} *Returns:* `os << format(os.getloc(), "{}/{}/{}", ymwd.year(), ymwd.month(), ymwd.weekday_indexed())`.
+> Let `fmt` be a string containing `"{}/{}/{}"` widened to `charT`.
+>
+> \pnum{8} *Effects:* Equivalent to:
+> ```
+> return os << format(os.getloc(), fmt, ymwd.year(), ymwd.month(),
+>                     ymwd.weekday_indexed());
+> ```
 > :::
 
 Note a drive-by fix above: `ymwdi` changed to `ymwd` to match the parameter
@@ -1053,7 +1107,13 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.
 > \pnum{8} *Returns:* `os << ymwdl.year() << ’/’ << ymwdl.month() << ’/’ << ymwdl.weekday_last(`.
 > :::
 > ::: add
-> \pnum{8} *Returns:* `os << format(os.getloc(), "{}/{}/{}", ymwdl.year(), ymwdl.month(), ymwdl.weekday_last())`.
+> Let `fmt` be a string containing `"{}/{}/{}"` widened to `charT`.
+>
+> \pnum{8} *Effects:* Equivalent to:
+> ```
+> return os << format(os.getloc(), fmt, ymwdl.year(), ymwdl.month(),
+>                     ymwdl.weekday_last());
+> ```
 > :::
 
 Modify section 27.10.7.4 Non-member functions
