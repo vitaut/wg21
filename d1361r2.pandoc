@@ -34,6 +34,8 @@ author:
 * Apply the widening wording to newly introduced format strings.
 * Add a note to editor to replace `time_of_day` with `hh_mm_ss` if [@P1466] is
   accepted.
+* Replace `"{%Y:}"` with the correct format string `"{:%Y}"` in
+  [`operator<<(basic_ostream<charT, traits>& os, const year& y)`](#year-insertion).
 
 # Changes since R1
 
@@ -803,13 +805,15 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.
 Modify section 27.8.5.3 Non-member functions [[time.cal.year.nonmembers]](
 http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.27.8.5.3):
 
+[]{#year-insertion}
+
 > ```
 > template<class charT, class traits>
 >   basic_ostream<charT, traits>&
 >     operator<<(basic_ostream<charT, traits>& os, const year& y);
 > ```
 > \pnum{7} *Effects:* Inserts `format(fmt, y)` where `fmt` is
-> [`"%Y"`]{.rm}[`"{%Y:}"`]{.add} widened to `charT`. If `!y.ok()`, appends with
+> [`"%Y"`]{.rm}[`"{:%Y}"`]{.add} widened to `charT`. If `!y.ok()`, appends with
 > `" is not a valid year"`.
 >
 > \pnum{8} *Returns:* `os`.
@@ -1632,4 +1636,5 @@ references:
       given: [Howard E.]
     issued:
       year: 2019
+    URL: http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p1466r2.html
 ---
