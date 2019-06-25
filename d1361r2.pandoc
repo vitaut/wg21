@@ -32,10 +32,13 @@ author:
   [`operator<<(basic_ostream<charT, traits>& os, const year_month_weekday& ymwd)`](
     #year_month_weekday-insertion) (a drive-by fix).
 * Apply the widening wording to newly introduced format strings.
+* Add `STATICALLY_WIDEN` pseudo-function and use it to simplify the wording. 
 * Add a note to editor to replace `time_of_day` with `hh_mm_ss` if [@P1466] is
   accepted.
 * Replace `"{%Y:}"` with the correct format string `"{:%Y}"` in
   [`operator<<(basic_ostream<charT, traits>& os, const year& y)`](#year-insertion).
+* Replace "satisfies the *Formatter* requirements" with "meets the *Formatter*
+  requirements" in [[time.format]](#time.format).
 
 # Changes since R1
 
@@ -245,6 +248,12 @@ Formatting of chrono durations and locale support have been implemented in the
 This wording is based on the working draft [@N4820] unless stated otherwise.
 
 Note to editor: if [@P1466] is accepted replace `time_of_day` with `hh_mm_ss`.
+
+Add to section 27.1 General
+[[time.general]](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#section.27.1):
+
+Let `STATICALLY_WIDEN<charT>("...")` be `"..."` if `charT` is `char` and
+`L"..."` if `charT` is `wchar_t`.
 
 Modify section 27.2 Header `<chrono>` synopsis
 [[time.syn]](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#section.27.2):
@@ -513,12 +522,11 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.
 > \pnum{3} *Returns:* `os`.
 > :::
 > ::: add
-> Let `fmt` be a string containing `"{} {}"` widened to `charT`.
->
-> \pnum{2} *Effects:* Equivalent to:
+> *Effects:* Equivalent to:
 > ```
 > auto const dp = floor<days>(tp);
-> return os << format(os.getloc(), fmt, year_month_day{dp}, time_of_day{tp-dp});
+> return os << format(os.getloc(), STATICALLY_WIDEN<charT>("{} {}"),
+>                     year_month_day{dp}, time_of_day{tp-dp});
 > ```
 > :::
 
@@ -552,15 +560,17 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.
 > ::: rm
 > \pnum{1} *Effects:* Calls `to_stream(os, fmt, t)`, where `fmt` is a string
 > containing `"%F %T"` widened to `charT`.
+>
+> \pnum{2} *Returns:* `os`.
 > :::
 <!-- Passing locale to format seems unnecessary because %F and %T are
      locale-independent. -->
 > ::: add
-> \pnum{1} *Effects:* Equivalent to `os << format(fmt, t)`, where `fmt` is a
-> string containing `"{:%F %T}"` widened to `charT`.
+> *Effects:* Equivalent to:
+> ```
+> return os << format(STATICALLY_WIDEN<charT>("{:%F %T}"), t);
+> ```
 > :::
->
-> \pnum{2} *Returns:* `os`.
 
 > ::: rm
 > ```
@@ -592,13 +602,15 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.
 > ::: rm
 > \pnum{1} *Effects:* Calls `to_stream(os, fmt, t)`, where `fmt` is a string
 > containing `"%F %T"` widened to `charT`.
-> :::
-> ::: add
-> \pnum{1} *Effects:* Equivalent to `os << format(fmt, t)`, where `fmt` is a
-> string containing `"{:%F %T}"` widened to `charT`.
-> :::
 >
 > \pnum{2} *Returns:* `os`.
+> :::
+> ::: add
+> *Effects:* Equivalent to:
+> ```
+> return os << format(STATICALLY_WIDEN<charT>("{:%F %T}"), t);
+> ```
+> :::
 
 > ::: rm
 > ```
@@ -645,13 +657,15 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.
 > ::: rm
 > \pnum{1} *Effects:* Calls `to_stream(os, fmt, t)`, where `fmt` is a string
 > containing `"%F %T"` widened to `charT`.
-> :::
-> ::: add
-> \pnum{1} *Effects:* Equivalent to `os << format(fmt, t)`, where `fmt` is a
-> string containing `"{:%F %T}"` widened to `charT`.
-> :::
 >
 > \pnum{2} *Returns:* `os`.
+> :::
+> ::: add
+> *Effects:* Equivalent to:
+> ```
+> return os << format(STATICALLY_WIDEN<charT>("{:%F %T}"), t);
+> ```
+> :::
 
 > ::: rm
 > ```
@@ -698,13 +712,15 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.
 > ::: rm
 > \pnum{1} *Effects:* Calls `to_stream(os, fmt, t)`, where `fmt` is a string
 > containing `"%F %T"` widened to `charT`.
-> :::
-> ::: add
-> \pnum{1} *Effects:* Equivalent to `os << format(fmt, t)`, where `fmt` is a
-> string containing `"{:%F %T}"` widened to `charT`.
-> :::
 >
 > \pnum{2} *Returns:* `os`.
+> :::
+> ::: add
+> *Effects:* Equivalent to:
+> ```
+> return os << format(STATICALLY_WIDEN<charT>("{:%F %T}"), t);
+> ```
+> :::
 
 > ::: rm
 > ```
@@ -756,11 +772,20 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.
 >   basic_ostream<charT, traits>&
 >     operator<<(basic_ostream<charT, traits>& os, const day& d);
 > ```
+> ::: rm
 > \pnum{7} *Effects:* Inserts `format(fmt, d)` where `fmt` is
-> [`"%d"`]{.rm}[`"{:%d}"`]{.add} widened to `charT`. If `!d.ok()`, appends with
+> `"%d"` widened to `charT`. If `!d.ok()`, appends with
 >`" is not a valid day"`.
 >
 > \pnum{8} *Returns:* `os`.
+> :::
+> ::: add
+> *Effects:* Equivalent to:
+> ```
+> return os << format(STATICALLY_WIDEN<charT>("{:%d}{}"), d,
+>                     d.ok() ? "" : " is not a valid day");
+> ```
+> :::
 
 > ::: rm
 > ```
@@ -783,11 +808,20 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.
 >   basic_ostream<charT, traits>&
 >     operator<<(basic_ostream<charT, traits>& os, const month& m);
 > ```
+> ::: rm
 > \pnum{7} *Effects:* If `m.ok() == true` inserts `format(os.getloc(), fmt, m)`
-> where `fmt` is [`"%b"`]{.rm}[`"{:%b}"`]{.add} widened to `charT`. Otherwise
+> where `fmt` is `"%b"` widened to `charT`. Otherwise
 > inserts `unsigned{m} << is not a valid month"`.
 >
 > \pnum{8} *Returns:* `os`.
+> :::
+> ::: add
+> *Effects:* Equivalent to:
+> ```
+> return os << format(os.getloc(), STATICALLY_WIDEN<charT>("{:%b}{}"), m,
+>                     m.ok() ? "" : " is not a valid month");
+> ```
+> :::
 
 > ::: rm
 > ```
@@ -812,11 +846,20 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.
 >   basic_ostream<charT, traits>&
 >     operator<<(basic_ostream<charT, traits>& os, const year& y);
 > ```
+> ::: rm
 > \pnum{7} *Effects:* Inserts `format(fmt, y)` where `fmt` is
-> [`"%Y"`]{.rm}[`"{:%Y}"`]{.add} widened to `charT`. If `!y.ok()`, appends with
+> `"%Y"` widened to `charT`. If `!y.ok()`, appends with
 > `" is not a valid year"`.
 >
 > \pnum{8} *Returns:* `os`.
+> :::
+> ::: add
+> *Effects:* Equivalent to:
+> ```
+> return os << format(STATICALLY_WIDEN<charT>("{:%Y}{}"), y,
+>                     y.ok() ? "" : " is not a valid year");
+> ```
+> :::
 
 > ::: rm
 > ```
@@ -839,11 +882,20 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.
 >   basic_ostream<charT, traits>&
 >     operator<<(basic_ostream<charT, traits>& os, const weekday& wd);
 > ```
+> ::: rm
 > \pnum{6} *Effects:* If `wd.ok() == true` inserts `format(os.getloc(), fmt, m)`
-> where `fmt` is [`"%a"`]{.rm}[`"{:%a}"`]{.add} widened to `charT`. Otherwise
+> where `fmt` is `"%a"` widened to `charT`. Otherwise
 > inserts `unsigned{m} << is not a valid weekday"`.
 >
 > \pnum{7} *Returns:* `os`.
+> :::
+> ::: add
+> *Effects:* Equivalent to:
+> ```
+> return os << format(os.getloc(), STATICALLY_WIDEN<charT>("{:%a}{}"), wd,
+>                     wd.ok() ? "" : " is not a valid weekday");
+> ```
+> :::
 
 > ::: rm
 > ```
@@ -874,13 +926,11 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.
 > \pnum{3} *Returns:* `os`.
 > :::
 > ::: add
-> Let `fmt` be a string containing `"{}[{}{}]"` widened to `charT`.
->
-> \pnum{2} *Effects:* Equivalent to:
+> *Effects:* Equivalent to:
 > ```
 > auto i = wdi.index();
-> return os << format(os.getloc(), fmt, wdi.weekday(), i,
->                     i >= 1 && i <= 5 ? "" : " is not a valid index");
+> return os << format(os.getloc(), STATICALLY_WIDEN<charT>("{}[{}{}]"), wdi.weekday(),
+>                     i, i >= 1 && i <= 5 ? "" : " is not a valid index");
 > ```
 > :::
 
@@ -896,11 +946,9 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.
 > \pnum{2} *Returns:* `os << wdl.weekday() << "[last]"`.
 > :::
 > ::: add
-> Let `fmt` be a string containing `"{}[last]"` widened to `charT`.
->
-> \pnum{2} *Effects:* Equivalent to:
+> *Effects:* Equivalent to:
 > ```
-> return os << format(os.getloc(), fmt, wdl.weekday());
+> return os << format(os.getloc(), STATICALLY_WIDEN<charT>("{}[last]"), wdl.weekday());
 > ```
 > :::
 
@@ -916,11 +964,10 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.
 > \pnum{3} *Returns:* `os << md.month() << ’/’ << md.day()`.
 > :::
 > ::: add
-> Let `fmt` be a string containing `"{}/{}"` widened to `charT`.
->
-> \pnum{3} *Effects:* Equivalent to:
+> *Effects:* Equivalent to:
 > ```
-> return os << format(os.getloc(), fmt, md.month(), md.day());
+> return os << format(os.getloc(), STATICALLY_WIDEN<charT>("{}/{}"),
+>                     md.month(), md.day());
 > ```
 > :::
 
@@ -949,11 +996,9 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsection.27.
 > \pnum{9} *Returns:* `os << mdl.month() << "/last"`.
 > :::
 > ::: add
-> Let `fmt` be a string containing `"{}/last"` widened to `charT`.
->
-> \pnum{9} *Effects:* Equivalent to:
+> *Effects:* Equivalent to:
 > ```
-> return os << format(os.getloc(), fmt, md.month());
+> return os << format(os.getloc(), STATICALLY_WIDEN<charT>("{}/last"), mdl.month());
 > ```
 > :::
 
@@ -969,11 +1014,10 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.
 > \pnum{2} *Returns:* `os << mwd.month() << ’/’ << mwd.weekday_indexed()`.
 > :::
 > ::: add
-> Let `fmt` be a string containing `"{}/{}"` widened to `charT`.
->
-> \pnum{2} *Effects:* Equivalent to:
+> *Effects:* Equivalent to:
 > ```
-> return os << format(os.getloc(), fmt, mwd.month(), mwd.weekday_indexed());
+> return os << format(os.getloc(), STATICALLY_WIDEN<charT>("{}/{}"),
+>                     mwd.month(), mwd.weekday_indexed());
 > ```
 > :::
 
@@ -989,11 +1033,10 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.
 > \pnum{2} *Returns:* `os << mwdl.month() << ’/’ << mwdl.weekday_last()`.
 > :::
 > ::: add
-> Let `fmt` be a string containing `"{}/{}"` widened to `charT`.
->
-> \pnum{2} *Effects:* Equivalent to:
+> *Effects:* Equivalent to:
 > ```
-> return os << format(os.getloc(), fmt, mwdl.month(), mwdl.weekday_last());
+> return os << format(os.getloc(), STATICALLY_WIDEN<charT>("{}/{}"), 
+>                     mwdl.month(), mwdl.weekday_last());
 > ```
 > :::
 
@@ -1009,11 +1052,10 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.
 > \pnum{11} *Returns:* `os << ym.year() << ’/’ << ym.month()`.
 > :::
 > ::: add
-> Let `fmt` be a string containing `"{}/{}"` widened to `charT`.
->
-> \pnum{11} *Effects:* Equivalent to:
+> *Effects:* Equivalent to:
 > ```
-> return os << format(os.getloc(), fmt, ym.year(), ym.month());
+> return os << format(os.getloc(), STATICALLY_WIDEN<charT>("{}/{}"),
+>                     ym.year(), ym.month());
 > ```
 > :::
 
@@ -1038,11 +1080,20 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.
 >   basic_ostream<charT, traits>&
 >     operator<<(basic_ostream<charT, traits>& os, const year_month_day& ymd);
 > ```
+> ::: rm
 > \pnum{11} *Effects:* Inserts `format(fmt, ymd)` where `fmt` is
-> [`"%F"`]{.rm}[`"{:%F}"`]{.add} widened to `charT`. If `!ymd.ok()`, appends
+> `"%F"` widened to `charT`. If `!ymd.ok()`, appends
 > with `" is not a valid date"`.
 >
 > \pnum{12} *Returns:* `os`.
+> :::
+> ::: add
+> *Effects:* Equivalent to:
+> ```
+> return os << format(STATICALLY_WIDEN<charT>("{:%F}{}"), ymd,
+>                     ymd.ok() ? "" : " is not a valid date");
+> ```
+> :::
 
 > ::: rm
 > ```
@@ -1069,11 +1120,10 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.
 > \pnum{9} *Returns:* `os << ymdl.year() << ’/’ << ymdl.month_day_last()`.
 > :::
 > ::: add
-> Let `fmt` be a string containing `"{}/{}"` widened to `charT`.
->
-> \pnum{9} *Effects:* Equivalent to:
+> *Effects:* Equivalent to:
 > ```
-> return os << format(os.getloc(), fmt, ymdl.year(), ymdl.month_day_last());
+> return os << format(os.getloc(), STATICALLY_WIDEN<charT>("{}/{}"),
+>                     ymdl.year(), ymdl.month_day_last());
 > ```
 > :::
 
@@ -1091,12 +1141,10 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.
 > \pnum{8} *Returns:* `os << ymwdi.year() << ’/’ << ymwdi.month() << ’/’ << ymwdi.weekday_indexed()`.
 > :::
 > ::: add
-> Let `fmt` be a string containing `"{}/{}/{}"` widened to `charT`.
->
-> \pnum{8} *Effects:* Equivalent to:
+> *Effects:* Equivalent to:
 > ```
-> return os << format(os.getloc(), fmt, ymwd.year(), ymwd.month(),
->                     ymwd.weekday_indexed());
+> return os << format(os.getloc(), STATICALLY_WIDEN<charT>("{}/{}/{}"),
+>                     ymwd.year(), ymwd.month(), ymwd.weekday_indexed());
 > ```
 > :::
 
@@ -1115,12 +1163,10 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.
 > \pnum{8} *Returns:* `os << ymwdl.year() << ’/’ << ymwdl.month() << ’/’ << ymwdl.weekday_last(`.
 > :::
 > ::: add
-> Let `fmt` be a string containing `"{}/{}/{}"` widened to `charT`.
->
-> \pnum{8} *Effects:* Equivalent to:
+> *Effects:* Equivalent to:
 > ```
-> return os << format(os.getloc(), fmt, ymwdl.year(), ymwdl.month(),
->                     ymwdl.weekday_last());
+> return os << format(os.getloc(), STATICALLY_WIDEN<charT>("{}/{}/{}"),
+>                     ymwdl.year(), ymwdl.month(), ymwdl.weekday_last());
 > ```
 > :::
 
@@ -1143,7 +1189,7 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.
 > \pnum{6} *Returns:* `os`.
 > :::
 
-Modify section 27.11 Formatting [[time.format]](
+Modify section [27.11 Formatting]{#time.format} [[time.format]](
 http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#section.27.11):
 
 > ::: rm
@@ -1178,7 +1224,7 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#section.27.11)
 > ::: add
 > Each `formatter` specialization in the chrono library
 > ([27.2](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#section.27.2))
-> satisfies the *Formatter* requirements
+> meets the *Formatter* requirements
 > ([[formatter.requirements]](http://wg21.link/p0645r9#formatter.requirements)).
 >
 > The `parse` member functions of these formatters treat the formatting string
