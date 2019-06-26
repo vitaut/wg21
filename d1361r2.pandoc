@@ -1561,19 +1561,19 @@ Modify section 19.20.2 Formatting functions
 > arguments provided by args formatted according to specifications given in
 > `fmt`. Uses `loc` for locale-specific formatting.
 >
-> *Throws:* `format_error` if `fmt` is not a valid format string.
+> *Throws:* `format_error` if `fmt` is not a format string.
 >
 > ```
 > template<class Out, class... Args>
 >   Out format_to(Out out, const locale& loc, string_view fmt, const Args&... args);
-> ```
-> *Returns:* `vformat_to(out, loc, fmt, make_format_args<basic_format_context<Out, char>>(args...))`.
->
-> ```
 > template<class Out, class... Args>
 >   Out format_to(Out out, const locale& loc, wstring_view fmt, const Args&... args);
 > ```
-> *Returns:* `vformat_to(out, loc, fmt, make_format_args<basic_format_context<Out, wchar_t>>(args...))`.
+> *Effects:* Equivalent to:
+> ```
+> using context = basic_format_context<Out, decltype(fmt)::value_type>;
+> return vformat_to(out, loc, fmt, {make_format_args<context>(args...)});
+> ```
 >
 > ```
 > template<class Out>
@@ -1583,14 +1583,21 @@ Modify section 19.20.2 Formatting functions
 >   Out vformat_to(Out out, const locale& loc, wstring_view fmt,
 >                  format_args_t<Out, wchar_t> args);
 > ```
+>
+> Let `charT` be `decltype(fmt)::value_type`.
+>
+> *Constraints:* `Out` satisfies `OutputIterator<const charT&>`.
+>
+> *Expects:* `Out` models `OutputIterator<const charT&>`.
+>
 > *Effects:* Places the character representation of formatting arguments
-> provided by `args` formatted according to specifications given in `fmt` into
-> the range `[out, out + N)`, where `N` is the formatted output size. Uses `loc`
-> for locale-specific formatting.
+> provided by `args`, formatted according to specifications given in `fmt`, into
+> the range `[out, out + N)`, where `N = formatted_size(loc, fmt, args...)`.
+> Uses `loc` for locale-specific formatting.
 >
 > *Returns:* `out + N`.
 >
-> *Throws:* `format_error` if `fmt` is not a valid format string.
+> Throws: `format_error` if `fmt` is not a format string.
 >
 > ```
 > template<class Out, class... Args>
@@ -1602,50 +1609,64 @@ Modify section 19.20.2 Formatting functions
 >                                       const locale& loc, wstring_view fmt,
 >                                       const Args&... args);
 > ```
-> Let `N` be the formatted output size and `M` be `min(max(n, 0), N)`.
 >
-> *Effects:* Places the character representation of formatting arguments
-> provided by `args` formatted according to specifications given in `fmt` into
-> the range `[out, out + M)`. Uses `loc` for locale-specific formatting.
+> Let `charT` be `decltype(fmt)::value_type`, `N = formatted_size(loc, fmt, args...)`,
+> and `M = min(max(n, 0), N)`.
+>
+> *Constraints:* `Out` satisfies `OutputIterator<const charT&>`.
+>
+> *Expects:* `Out` models `OutputIterator<const charT&>`. `formatter<T`~i~`, charT>`
+> meets the *Formatter* requirements for each `T`~i~ in `Args`.
+>
+> *Effects:* Places the first `M` characters of the character representation of
+> formatting arguments provided by `args`, formatted according to specifications
+> given in `fmt`, into the range `[out, out + M)`.
+> Uses `loc` for locale-specific formatting.
 >
 > *Returns:* `{out + M, N}`.
 >
-> *Throws:* `format_error` if `fmt` is not a valid format string.
+> *Throws:* `format_error` if `fmt` is not a format string.
+>
 >
 > ```
 > template<class... Args>
->   size_t formatted_size(const locale& loc, string_view fmt,
->                         const Args&... args);
+>   size_t formatted_size(const locale& loc, string_view fmt, const Args&... args);
 > template<class... Args>
->   size_t formatted_size(const locale& loc, wstring_view fmt,
->                         const Args&... args);
+>   size_t formatted_size(const locale& loc, wstring_view fmt, const Args&... args);
 > ```
+>
+> Let `charT` be `decltype(fmt)::value_type`.
+>
+> *Expects:* `formatter<Ti, charT>` meets the *Formatter* requirements for each
+> `T`~i~ in `Args`.
+>
 > *Returns:* The number of characters in the character representation of
 > formatting arguments `args` formatted according to specifications given in
-> `fmt`. Uses `loc` for locale-specific formatting.
+> `fmt`.
+> Uses `loc` for locale-specific formatting.
 >
-> *Throws:* format_error if `fmt` is not a valid format string.
+> *Throws:* `format_error` if `fmt` is not a format string.
 > :::
 
 Modify section 19.20.3.3 Class template `basic_format_context`
-[[format.context]](http://fmtlib.net/P0645R4.html#format.context):
+[[format.context]](http://wiki.edg.com/pub/Wg21cologne2019/LibraryWorkingGroup/D0645R10.html#format.context):
 
 ```diff
-  template<class O, class charT> requires OutputIterator<O, const charT&>
-    class basic_format_context {
-    public:
+  template<class Out, class charT>
+  class basic_format_context {
+  public:
 ...
-      basic_format_arg<basic_format_context> arg(size_t id) const;
-+     std::locale locale();
+    basic_format_arg<basic_format_context> arg(size_t id) const;
++   std::locale locale();
 ...
-    };
+  };
 ```
 
 > ::: add
 > ```
 > std::locale locale();
 > ```
-> _Returns_: The locale passed to a formatting function if the latter takes one
+> *Returns:* The locale passed to a formatting function if the latter takes one
 > or `std::locale()` otherwise.
 > :::
 
