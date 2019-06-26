@@ -21,7 +21,8 @@ author:
 
 # Changes since R2
 
-* Rebase the wording onto the pre-Cologne C++ working draft N4820. 
+* Rebase the wording onto the pre-Cologne C++ working draft N4820 and
+  P0645R9.
 * Rename the section "Proposed Changes" to "Summary of Proposed Changes".
 * Close the `chrono` namespace before [`formatter` specializations](
   #local_time_format-synopsis) and reopen it afterwards in Header `<chrono>`
@@ -732,8 +733,8 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.
 > \pnum{3} *Effects:* Streams `tp` into `os` using the format specified by the
 > NTCTS `fmt`. `fmt` encoding follows the rules specified in 27.11.
 > If `%Z` is used, it will be replaced with `"UTC"` widened to `charT`. If `%z`
-> is used > (or a modified variant of `%z` ), an offset of `0min` will be
-> formatted. The > date and time formatted shall be equivalent to that formatted
+> is used (or a modified variant of `%z` ), an offset of `0min` will be
+> formatted. The date and time formatted shall be equivalent to that formatted
 > by a `sys_time` initialized with `clock_cast<system_clock>(tp)`, or by a
 > `utc_time` initialized with `clock_cast<utc_clock>(tp)`.
 >
@@ -1238,7 +1239,7 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#section.27.11)
 >
 > ```
 > format-spec     ::= [[fill] align] [width] ['.' precision]
-                      [conversion-spec [chrono-specs]]
+>                     [conversion-spec [chrono-specs]]
 > chrono-specs    ::= chrono-spec [chrono-specs]
 > chrono-spec     ::= literal-char | conversion-spec
 > literal-char    ::= <a character other than '{' or '}'>
@@ -1251,7 +1252,7 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#section.27.11)
 > ```
 >
 > `fill`, `align`, `width`, and `precision` are described in Section
-> [[format.functions]](http://fmtlib.net/P0645R4.html#format-functions).
+> [[format.string]](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p0645r9.html#format.string).
 > Giving a `precision` specification in the `format-spec` is valid only for
 > `std::chrono::duration` types where the representation type `Rep` is a
 > floating-point type. For all other `Rep` types, a `format_error` shall be
@@ -1271,11 +1272,11 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#section.27.11)
 
 > ::: add
 > Each conversion specifier `conversion-spec` is replaced by appropriate
-> characters as described in Table 88. Some of the conversion specifiers depend
-> on the locale which is passed to the formatting function if the latter takes
-> one or the global locale otherwise. If the formatted object does not contain
-> the information the conversion specifier refers to, the value written to the
-> output is unspecified.
+> characters as described in Table [87](#conversion-specs). Some of the
+> conversion specifiers depend on the locale which is passed to the formatting
+> function if the latter takes one or the global locale otherwise. If the
+> formatted object does not contain the information the conversion specifier
+> refers to, the value written to the output is unspecified.
 > :::
 
 > ::: rm
@@ -1294,7 +1295,7 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#section.27.11)
 > `format_error` shall be thrown.
 > :::
 
-> Table 88 -- Meaning of [`format`]{.rm} conversion specifiers
+> [Table 87]{#conversion-specs} -- Meaning of [`format`]{.rm} conversion specifiers
 
 --------------------------------------------------------------------------------
 Specifier Replacement
@@ -1352,8 +1353,8 @@ Specifier Replacement
 >   struct formatter<chrono::sys_time<Duration>, charT>;
 > ```
 >
-> If `%Z` is used, it will be replaced with `"UTC"` widened to `charT`. If `%z`
-> is used (or a modified variant of `%z`), an offset of `0min` will be
+> If `%Z` is used, it will be replaced with `STATICALLY_WIDEN<charT>("UTC")`.
+> If `%z` is used (or a modified variant of `%z`), an offset of `0min` will be
 > formatted.
 >
 > ```
@@ -1361,21 +1362,21 @@ Specifier Replacement
 >   struct formatter<chrono::utc_time<Duration>, charT>;
 > ```
 >
-> If `%Z` is used, it will be replaced with `"UTC"` widened to `charT`. If `%z`
-> is used (or a modified variant of `%z`), an offset of `0min` will be
+> If `%Z` is used, it will be replaced with `STATICALLY_WIDEN<charT>("UTC")`.
+> If `%z` is used (or a modified variant of `%z`), an offset of `0min` will be
 > formatted. If `tp` represents a time during a leap second insertion, and if a
-> seconds field is formatted, the integral portion of that format shall be `"60"`
-> widened to `charT`.
+> seconds field is formatted, the integral portion of that format shall be
+> `STATICALLY_WIDEN<charT>("60")`.
 >
 > ```
 > template<class Duration, class charT>
 >   struct formatter<chrono::tai_time<Duration>, charT>;
 > ```
 >
-> If `%Z` is used, it will be replaced with `"TAI"`. If `%z` is used (or a
-> modified variant of `%z`), an offset of `0min` will be formatted. The date
-> and time formatted shall be equivalent to that formatted by a `sys_time`
-> initialized with:
+> If `%Z` is used, it will be replaced with `STATICALLY_WIDEN<charT>("TAI")`.
+> If `%z` is used (or a modified variant of `%z`), an offset of `0min` will be
+> formatted. The date and time formatted shall be equivalent to that formatted
+> by a `sys_time` initialized with:
 > ```
 > sys_time<Duration>{tp.time_since_epoch()} -
 >   (sys_days{1970y/January/1} - sys_days{1958y/January/1})
@@ -1386,10 +1387,10 @@ Specifier Replacement
 >   struct formatter<chrono::gps_time<Duration>, charT>;
 > ```
 >
-> If `%Z` is used, it will be replaced with `"GPS"`. If `%z` is used (or a
-> modified variant of `%z`), an offset of `0min` will be formatted. The date
-> and time formatted shall be equivalent to that formatted by a `sys_time`
-> initialized with:
+> If `%Z` is used, it will be replaced with `STATICALLY_WIDEN<charT>("GPS")`.
+> If `%z` is used (or a modified variant of `%z`), an offset of `0min` will be
+> formatted. The date and time formatted shall be equivalent to that formatted
+> by a `sys_time` initialized with:
 > ```
 > sys_time<Duration>{tp.time_since_epoch()} +
 >   (sys_days{1980y/January/Sunday[1]} - sys_days{1970y/January/1})
@@ -1400,9 +1401,9 @@ Specifier Replacement
 >   struct formatter<chrono::file_time<Duration>, charT>;
 > ```
 >
-> If `%Z` is used, it will be replaced with `"UTC"` widened to `charT`. If `%z`
-> is used > (or a modified variant of `%z` ), an offset of `0min` will be
-> formatted. The > date and time formatted shall be equivalent to that formatted
+> If `%Z` is used, it will be replaced with `STATICALLY_WIDEN<charT>("UTC")`.
+> If `%z` is used (or a modified variant of `%z` ), an offset of `0min` will be
+> formatted. The date and time formatted shall be equivalent to that formatted
 > by a `sys_time` initialized with `clock_cast<system_clock>(tp)`, or by a
 > `utc_time` initialized with `clock_cast<utc_clock>(tp)`.
 >
@@ -1460,10 +1461,12 @@ Specifier Replacement
 >     format(const chrono::zoned_time<Duration, TimeZonePtr>& tp, FormatContext& ctx);
 > ```
 >
-> *Effects:* First obtains a `sys_info` via `tp.get_info()` which for exposition
-> purposes will be referred to as `info`. Then returns
-> `formatter<chrono::local_time_format_t<Duration>, charT>::format(
-> {tp.get_local_time(), &info.abbrev, &info.offset}, ctx)`.
+> *Effects:* Equivalent to:
+> ```
+> sys_info info = tp.get_info();
+> return formatter<chrono::local_time_format_t<Duration>, charT>::format(
+>   {tp.get_local_time(), &info.abbrev, &info.offset}, ctx);
+> ```
 > :::
 
 ## Changes to P0645 Text Formatting
@@ -1471,7 +1474,7 @@ Specifier Replacement
 The wording in this section is based on [@P0645].
 
 Modify section 19.20.1 Header `<format>` synopsis
-[[format.syn]](http://fmtlib.net/P0645R4.html#gensection-5):
+[[format.syn]](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p0645r9.html#format.syn):
 
 ```diff
   template<class... Args>
@@ -1489,37 +1492,37 @@ Modify section 19.20.1 Header `<format>` synopsis
 
 ...
 
-  template<OutputIterator<const wchar_t&> O, class... Args>
-    O format_to(O out, wstring_view fmt, const Args&... args);
-+ template<OutputIterator<const char&> O, class... Args>
-+   O format_to(O out, const locale& loc, string_view fmt, const Args&... args);
-+ template<OutputIterator<const wchar_t&> O, class... Args>
-+   O format_to(O out, const locale& loc, wstring_view fmt, const Args&... args);
+  template<class Out, class... Args>
+    Out format_to(Out out, wstring_view fmt, const Args&... args);
++ template<class Out, class... Args>
++   Out format_to(Out out, const locale& loc, string_view fmt, const Args&... args);
++ template<class Out, class... Args>
++   Out format_to(Out out, const locale& loc, wstring_view fmt, const Args&... args);
 
 ...
 
-  template<OutputIterator<const wchar_t&> O>
-    O vformat_to(O out, wstring_view fmt, format_args_t<O, wchar_t> args);
-+ template<OutputIterator<const char&> O>
-+   O vformat_to(O out, const locale& loc, string_view fmt,
-+                format_args_t<O, char> args);
-+ template<OutputIterator<const wchar_t&> O>
-+   O vformat_to(O out, const locale& loc, wstring_view fmt,
-+                format_args_t<O, wchar_t> args);
+  template<class Out>
+    Out vformat_to(Out out, wstring_view fmt, format_args_t<Out, wchar_t> args);
++ template<class Out>
++   Out vformat_to(Out out, const locale& loc, string_view fmt,
++                  format_args_t<Out, char> args);
++ template<class Out>
++   Out vformat_to(Out out, const locale& loc, wstring_view fmt,
++                  format_args_t<Out, wchar_t> args);
 
 ...
 
-  template<OutputIterator<const char&> O, class... Args>
-    format_to_n_result<O> format_to_n(O out, iter_difference_t<O> n,
-                                      string_view fmt, const Args&... args);
-+ template<OutputIterator<const char&> O, class... Args>
-+   format_to_n_result<O> format_to_n(O out, iter_difference_t<O> n,
-+                                     const locale& loc, string_view fmt,
-+                                     const Args&... args);
-+ template<OutputIterator<const wchar_t&> O, class... Args>
-+   format_to_n_result<O> format_to_n(O out, iter_difference_t<O> n,
-+                                     const locale& loc, wstring_view fmt,
-+                                     const Args&... args);
+  template<class Out, class... Args>
+    format_to_n_result<Out> format_to_n(Out out, iter_difference_t<Out> n,
+                                        wstring_view fmt, const Args&... args);
++ template<class Out, class... Args>
++   format_to_n_result<Out> format_to_n(Out out, iter_difference_t<Out> n,
++                                       const locale& loc, string_view fmt,
++                                       const Args&... args);
++ template<class Out, class... Args>
++   format_to_n_result<Out> format_to_n(Out out, iter_difference_t<Out> n,
++                                       const locale& loc, wstring_view fmt,
++                                       const Args&... args);
 
 ...
 
@@ -1534,20 +1537,20 @@ Modify section 19.20.1 Header `<format>` synopsis
 ```
 
 Modify section 19.20.2 Formatting functions
-[[format.functions]](http://fmtlib.net/P0645R4.html#format.functions):
+[[format.functions]](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p0645r9.html#format.functions):
 
 > ::: add
 > ```
 > template<class... Args>
 >   string format(const locale& loc, string_view fmt, const Args&... args);
 > ```
-> *Returns:* `vformat(loc, fmt, make_format_args(args...))`.
+> *Effects:* Equivalent to: `return vformat(loc, fmt, make_format_args(args...));`
 >
 > ```
 > template<class... Args>
 >   wstring format(const locale& loc, wstring_view fmt, const Args&... args);
 > ```
-> *Returns:* `vformat(loc, fmt, make_wformat_args(args...))`.
+> *Effects:* Equivalent to: `return vformat(loc, fmt, make_wformat_args(args...));`
 >
 > ```
 > string vformat(const locale& loc, string_view fmt, format_args args);
@@ -1560,24 +1563,24 @@ Modify section 19.20.2 Formatting functions
 > *Throws:* `format_error` if `fmt` is not a valid format string.
 >
 > ```
-> template<OutputIterator<const char&> O, class... Args>
->   O format_to(O out, const locale& loc, string_view fmt, const Args&... args);
+> template<class Out, class... Args>
+>   Out format_to(Out out, const locale& loc, string_view fmt, const Args&... args);
 > ```
-> *Returns:* `vformat_to(out, loc, fmt, make_format_args<basic_format_context<O, char>>(args...))`.
+> *Returns:* `vformat_to(out, loc, fmt, make_format_args<basic_format_context<Out, char>>(args...))`.
 >
 > ```
-> template<OutputIterator<const wchar_t&> O, class... Args>
->   O format_to(O out, const locale& loc, wstring_view fmt, const Args&... args);
+> template<class Out, class... Args>
+>   Out format_to(Out out, const locale& loc, wstring_view fmt, const Args&... args);
 > ```
-> *Returns:* `vformat_to(out, loc, fmt, make_format_args<basic_format_context<O, wchar_t>>(args...))`.
+> *Returns:* `vformat_to(out, loc, fmt, make_format_args<basic_format_context<Out, wchar_t>>(args...))`.
 >
 > ```
-> template<OutputIterator<const char&> O>
->   O vformat_to(O out, const locale& loc, string_view fmt,
->                format_args_t<O, char> args);
-> template<OutputIterator<const wchar_t&> O>
->   O vformat_to(O out, const locale& loc, wstring_view fmt,
->                format_args_t<O, wchar_t> args);
+> template<class Out>
+>   Out vformat_to(Out out, const locale& loc, string_view fmt,
+>                  format_args_t<Out, char> args);
+> template<class Out>
+>   Out vformat_to(Out out, const locale& loc, wstring_view fmt,
+>                  format_args_t<Out, wchar_t> args);
 > ```
 > *Effects:* Places the character representation of formatting arguments
 > provided by `args` formatted according to specifications given in `fmt` into
@@ -1589,14 +1592,14 @@ Modify section 19.20.2 Formatting functions
 > *Throws:* `format_error` if `fmt` is not a valid format string.
 >
 > ```
-> template<OutputIterator<const char&> O, class... Args>
->   format_to_n_result<O> format_to_n(O out, iter_difference_t<O> n,
->                                     const locale& loc, string_view fmt,
->                                     const Args&... args);
-> template<OutputIterator<const wchar_t&> O, class... Args>
->   format_to_n_result<O> format_to_n(O out, iter_difference_t<O> n,
->                                     const locale& loc, wstring_view fmt,
->                                     const Args&... args);
+> template<class Out, class... Args>
+>   format_to_n_result<Out> format_to_n(Out out, iter_difference_t<Out> n,
+>                                       const locale& loc, string_view fmt,
+>                                       const Args&... args);
+> template<class Out, class... Args>
+>   format_to_n_result<Out> format_to_n(Out out, iter_difference_t<Out> n,
+>                                       const locale& loc, wstring_view fmt,
+>                                       const Args&... args);
 > ```
 > Let `N` be the formatted output size and `M` be `min(max(n, 0), N)`.
 >
