@@ -22,7 +22,7 @@ author:
 # Changes since R2
 
 * Rebase the wording onto the pre-Cologne C++ working draft N4820 and
-  P0645R9.
+  D0645R10.
 * Rename the section "Proposed Changes" to "Summary of Proposed Changes".
 * Close the `chrono` namespace before [`formatter` specializations](
   #local_time_format-synopsis) and reopen it afterwards in Header `<chrono>`
@@ -1232,7 +1232,7 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#section.27.11)
 > Each `formatter` specialization in the chrono library
 > ([27.2](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#section.27.2))
 > meets the *Formatter* requirements
-> ([[formatter.requirements]](http://wg21.link/p0645r9#formatter.requirements)).
+> ([[formatter.requirements]](http://wiki.edg.com/pub/Wg21cologne2019/LibraryWorkingGroup/D0645R10.html#formatter.requirements)).
 >
 > The `parse` member functions of these formatters treat the formatting string
 > according to the following specification:
@@ -1252,7 +1252,7 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#section.27.11)
 > ```
 >
 > `fill`, `align`, `width`, and `precision` are described in Section
-> [[format.string]](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p0645r9.html#format.string).
+> [[format.string]](http://wiki.edg.com/pub/Wg21cologne2019/LibraryWorkingGroup/D0645R10.html#format.string).
 > Giving a `precision` specification in the `format-spec` is valid only for
 > `std::chrono::duration` types where the representation type `Rep` is a
 > floating-point type. For all other `Rep` types, a `format_error` shall be
@@ -1471,10 +1471,11 @@ Specifier Replacement
 
 ## Changes to P0645 Text Formatting
 
-The wording in this section is based on [@P0645].
+The wording in this section is based on [D0645R10](
+http://wiki.edg.com/pub/Wg21cologne2019/LibraryWorkingGroup/D0645R10.html).
 
 Modify section 19.20.1 Header `<format>` synopsis
-[[format.syn]](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p0645r9.html#format.syn):
+[[format.syn]](http://wiki.edg.com/pub/Wg21cologne2019/LibraryWorkingGroup/D0645R10.html#format.syn):
 
 ```diff
   template<class... Args>
@@ -1537,7 +1538,7 @@ Modify section 19.20.1 Header `<format>` synopsis
 ```
 
 Modify section 19.20.2 Formatting functions
-[[format.functions]](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p0645r9.html#format.functions):
+[[format.functions]](http://wiki.edg.com/pub/Wg21cologne2019/LibraryWorkingGroup/D0645R10.html#format.functions):
 
 > ::: add
 > ```
@@ -1678,7 +1679,7 @@ references:
       given: [Victor]
     issued:
       year: 2019
-    URL: http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p0645r9.html
+    URL: http://wiki.edg.com/pub/Wg21cologne2019/LibraryWorkingGroup/D0645R10.html
   - id: PYSTR
     citation-label: PYSTR
     title: String Methods, The Python Standard Library
