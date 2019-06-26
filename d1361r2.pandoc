@@ -783,7 +783,8 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.
 > *Effects:* Equivalent to:
 > ```
 > return os << format(STATICALLY_WIDEN<charT>("{:%d}{}"), d,
->                     d.ok() ? "" : " is not a valid day");
+>                     d.ok() ? STATICALLY_WIDEN<charT>("") :
+>                              STATICALLY_WIDEN<charT>(" is not a valid day"));
 > ```
 > :::
 
@@ -819,7 +820,8 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.
 > *Effects:* Equivalent to:
 > ```
 > return os << format(os.getloc(), STATICALLY_WIDEN<charT>("{:%b}{}"), m,
->                     m.ok() ? "" : " is not a valid month");
+>                     m.ok() ? STATICALLY_WIDEN<charT>("") :
+>                              STATICALLY_WIDEN<charT>(" is not a valid month"));
 > ```
 > :::
 
@@ -857,7 +859,8 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.
 > *Effects:* Equivalent to:
 > ```
 > return os << format(STATICALLY_WIDEN<charT>("{:%Y}{}"), y,
->                     y.ok() ? "" : " is not a valid year");
+>                     y.ok() ? STATICALLY_WIDEN<charT>("") :
+>                              STATICALLY_WIDEN<charT>(" is not a valid year"));
 > ```
 > :::
 
@@ -893,7 +896,8 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.
 > *Effects:* Equivalent to:
 > ```
 > return os << format(os.getloc(), STATICALLY_WIDEN<charT>("{:%a}{}"), wd,
->                     wd.ok() ? "" : " is not a valid weekday");
+>                     wd.ok() ? STATICALLY_WIDEN<charT>("") :
+>                               STATICALLY_WIDEN<charT>(" is not a valid weekday"));
 > ```
 > :::
 
@@ -929,8 +933,9 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.
 > *Effects:* Equivalent to:
 > ```
 > auto i = wdi.index();
-> return os << format(os.getloc(), STATICALLY_WIDEN<charT>("{}[{}{}]"), wdi.weekday(),
->                     i, i >= 1 && i <= 5 ? "" : " is not a valid index");
+> return os << format(os.getloc(), STATICALLY_WIDEN<charT>("{}[{}{}]"), wdi.weekday(), i,
+>                     i >= 1 && i <= 5 ? STATICALLY_WIDEN<charT>("") :
+>                                        STATICALLY_WIDEN<charT>(" is not a valid index"));
 > ```
 > :::
 
@@ -1091,7 +1096,8 @@ http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4820.pdf#subsubsection.
 > *Effects:* Equivalent to:
 > ```
 > return os << format(STATICALLY_WIDEN<charT>("{:%F}{}"), ymd,
->                     ymd.ok() ? "" : " is not a valid date");
+>                     ymd.ok() ? STATICALLY_WIDEN<charT>("") :
+>                                STATICALLY_WIDEN<charT>(" is not a valid date"));
 > ```
 > :::
 
