@@ -1474,7 +1474,7 @@ Specifier Replacement
 The wording in this section is based on [D0645R10](
 http://wiki.edg.com/pub/Wg21cologne2019/LibraryWorkingGroup/D0645R10.html).
 
-Modify section 19.20.1 Header `<format>` synopsis
+Modify section 20.?.1 Header `<format>` synopsis
 [[format.syn]](http://wiki.edg.com/pub/Wg21cologne2019/LibraryWorkingGroup/D0645R10.html#format.syn):
 
 ```diff
@@ -1537,7 +1537,7 @@ Modify section 19.20.1 Header `<format>` synopsis
 +                         const Args&... args);
 ```
 
-Modify section 19.20.2 Formatting functions
+Modify section 20.?.3 Formatting functions
 [[format.functions]](http://wiki.edg.com/pub/Wg21cologne2019/LibraryWorkingGroup/D0645R10.html#format.functions):
 
 > ::: add
@@ -1648,7 +1648,7 @@ Modify section 19.20.2 Formatting functions
 > *Throws:* `format_error` if `fmt` is not a format string.
 > :::
 
-Modify section 19.20.3.3 Class template `basic_format_context`
+Modify section 20.?.4.3 Class template `basic_format_context`
 [[format.context]](http://wiki.edg.com/pub/Wg21cologne2019/LibraryWorkingGroup/D0645R10.html#format.context):
 
 ```diff
